@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
 using Vts.MonteCarlo.Sources;
 using Vts.MonteCarlo.Sources.SourceProfiles;
+using System;
 
 namespace Vts.MonteCarlo
 {
-
     /// <summary>
     /// Implements various commonly used SourceInput classes.
     /// </summary>
@@ -18,64 +20,63 @@ namespace Vts.MonteCarlo
         /// <returns>a list of the ISourceInputs generated</returns>
         public static IList<ISourceInput> GenerateAllSourceInputs()
         {
-            return new List<ISourceInput>()
+            return new ISourceInput[]
             {
-                PointSource(),
-                LineSource(),
-                GaussianSource()
+                // Point Sources
+                new DirectionalPointSourceInput(),
+                new IsotropicPointSourceInput(),
+                new CustomPointSourceInput(),
+                // Line Sources
+                new DirectionalLineSourceInput(),
+                new IsotropicLineSourceInput(),
+                new CustomLineSourceInput(),
+                // Surface-Emitting Flat Sources
+                new DirectionalCircularSourceInput(),
+                new CustomCircularSourceInput(),
+                new DirectionalEllipticalSourceInput(),
+                new CustomEllipticalSourceInput(),
+                new DirectionalRectangularSourceInput(),
+                new CustomRectangularSourceInput(),
+                // Surface-Emitting Bulk Sources
+                new LambertianSurfaceEmittingCylindricalFiberSourceInput(),
+                new LambertianSurfaceEmittingSphericalSourceInput(),
+                new CustomSurfaceEmittingSphericalSourceInput(),
+                new LambertianSurfaceEmittingCuboidalSourceInput(),
+                new LambertianSurfaceEmittingTubularSourceInput(),
+                // Volumetric Sources
+                new IsotropicVolumetricCuboidalSourceInput(),
+                new CustomVolumetricCuboidalSourceInput(),
+                new IsotropicVolumetricEllipsoidalSourceInput(),
+                new CustomVolumetricEllipsoidalSourceInput(),
             };
-        }
+            //Func<Type, ISourceInput> createInstanceOrReturnNull = type =>
+            // {
+            //     try
+            //     {
+            //         return (ISourceInput)type.GetConstructor(new Type[] { }).Invoke(new object[] { });
+            //         //return (ISourceInput)Activator.CreateInstance(type);
+            //     }
+            //     catch
+            //     {
+            //         return null;
+            //     }
+            // };
 
-        #region Point source
-        /// <summary>
-        /// Point source normally oriented
-        /// </summary>
-        /// <returns></returns>
-        public static ISourceInput PointSource()
-        {
-            return new DirectionalPointSourceInput(
-                    new Position(0.0, 0.0, 0.0),
-                    new Direction(0.0, 0.0, 1.0),
-                    0); // 0=start in air, 1=start in tissue
-        }
-        #endregion
+            //var allTypes = Assembly.GetExecutingAssembly().GetTypes();
 
-        #region Line source
-        /// <summary>
-        /// Line source normally oriented
-        /// </summary>
-        public static ISourceInput LineSource()
-        {
-            return new CustomLineSourceInput(
-                    10.0, // line length
-                    new FlatSourceProfile(),
-                    new DoubleRange(0.0, 0.0), // polar angle emission range
-                    new DoubleRange(0.0, 0.0), // azimuthal angle emmision range
-                    new Direction(0, 0, 1), // normal to tissue
-                    new Position(0, 0, 0), // center of beam on surface
-                    new PolarAzimuthalAngles(0, 0), // no beam rotation         
-                    0); // 0=start in air, 1=start in tissue
-        }
-        #endregion
+            //foreach (var type in allTypes)
+            //{
+            //    Console.WriteLine(type);
+            //}
 
-        #region Gaussian source 
-        /// <summary>
-        /// Gaussian normal source with fwhm=1 and outer radius=3mm
-        /// </summary>
-        public static ISourceInput GaussianSource()
-        {
-            return new CustomCircularSourceInput(
-                    3.0, // outer radius
-                    0.0, // inner radius
-                    new GaussianSourceProfile(1.0), // fwhm
-                    new DoubleRange(0.0, 0.0), // polar angle emission range
-                    new DoubleRange(0.0, 0.0), // azimuthal angle emmision range
-                    new Direction(0, 0, 1), // normal to tissue
-                    new Position(0, 0, 0), // center of beam on surface
-                    new PolarAzimuthalAngles(0, 0), // no beam rotation         
-                    0); // 0=start in air, 1=start in tissue
-        }
-        #endregion
+            //var validTypes = 
+            //    from type in allTypes
+            //    where type.IsClass && type.Namespace == nameof(Vts.MonteCarlo.Sources) && type.Name.EndsWith("SourceInput")
+            //    select type;
 
+            //var sourceInputs = validTypes.Select(type => createInstanceOrReturnNull(type));
+
+            //return sourceInputs.ToArray();
+        }
     }
 }
