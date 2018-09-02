@@ -22,28 +22,23 @@ namespace Vts.MonteCarlo
         {
             return new ISourceInput[]
             {
-                // Point Sources
                 new DirectionalPointSourceInput(),
                 new IsotropicPointSourceInput(),
                 new CustomPointSourceInput(),
-                // Line Sources
                 new DirectionalLineSourceInput(),
                 new IsotropicLineSourceInput(),
                 new CustomLineSourceInput(),
-                // Surface-Emitting Flat Sources
                 new DirectionalCircularSourceInput(),
                 new CustomCircularSourceInput(),
                 new DirectionalEllipticalSourceInput(),
                 new CustomEllipticalSourceInput(),
                 new DirectionalRectangularSourceInput(),
                 new CustomRectangularSourceInput(),
-                // Surface-Emitting Bulk Sources
                 new LambertianSurfaceEmittingCylindricalFiberSourceInput(),
                 new LambertianSurfaceEmittingSphericalSourceInput(),
                 new CustomSurfaceEmittingSphericalSourceInput(),
                 new LambertianSurfaceEmittingCuboidalSourceInput(),
                 new LambertianSurfaceEmittingTubularSourceInput(),
-                // Volumetric Sources
                 new IsotropicVolumetricCuboidalSourceInput(),
                 new CustomVolumetricCuboidalSourceInput(),
                 new IsotropicVolumetricEllipsoidalSourceInput(),
