@@ -138,6 +138,9 @@
     <Compile Include="..\Vts.Test\Common\StopwatchTests.cs">
       <Link>Common\StopwatchTests.cs</Link>
     </Compile>
+    <Compile Include="..\Vts.Test\Dumper.cs">
+      <Link>Dumper.cs</Link>
+    </Compile>
     <Compile Include="..\Vts.Test\Factories\ComputationFactoryTests.cs">
       <Link>Factories\ComputationFactoryTests.cs</Link>
     </Compile>
