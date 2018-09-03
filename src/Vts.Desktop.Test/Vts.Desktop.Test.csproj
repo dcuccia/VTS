@@ -213,6 +213,9 @@
     <Compile Include="..\Vts.Test\MonteCarlo\DataStructuresValidation\TissueInputs\SingleVoxelTissueInputValidationTests.cs">
       <Link>MonteCarlo\DataStructuresValidation\TissueInputs\SingleVoxelTissueInputValidationTests.cs</Link>
     </Compile>
+    <Compile Include="..\Vts.Test\MonteCarlo\DataStructures\DetectorInputProviderTests.cs">
+      <Link>MonteCarlo\DataStructures\DetectorInputProviderTests.cs</Link>
+    </Compile>
     <Compile Include="..\Vts.Test\MonteCarlo\DataStructures\DetectorInputs\DetectorInputTests.cs">
       <Link>MonteCarlo\DataStructures\DetectorInputs\DetectorInputTests.cs</Link>
     </Compile>
