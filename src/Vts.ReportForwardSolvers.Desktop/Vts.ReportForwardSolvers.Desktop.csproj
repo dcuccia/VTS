@@ -135,9 +135,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="MathNet.Numerics">
       <Version>4.5.1</Version>
     </PackageReference>

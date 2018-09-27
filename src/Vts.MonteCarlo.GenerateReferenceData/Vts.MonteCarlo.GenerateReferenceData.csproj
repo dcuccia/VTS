@@ -87,9 +87,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Vts\Vts.csproj">
       <Project>{92381e9c-57f9-4391-a3c6-a5faa99e823b}</Project>
       <Name>Vts</Name>

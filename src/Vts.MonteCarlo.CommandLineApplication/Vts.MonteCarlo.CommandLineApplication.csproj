@@ -60,12 +60,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\Vts.Desktop\AssemblyFileVersion.cs">
-      <Link>AssemblyFileVersion.cs</Link>
-    </Compile>
-    <Compile Include="..\Vts.Desktop\AssemblyVersion.cs">
-      <Link>AssemblyVersion.cs</Link>
-    </Compile>
     <Compile Include="MonteCarloSetup.cs" />
     <Compile Include="ParameterSweep.cs" />
     <Compile Include="Program.cs" />
@@ -102,7 +96,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
