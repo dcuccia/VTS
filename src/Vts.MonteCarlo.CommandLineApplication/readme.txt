@@ -1,9 +1,9 @@
 ﻿Virtual Tissue Simulator (VTS) Project
 Monte Carlo Command-line Application
-Copyright (c) 2018 Laser Microbeam and Medical Program
+Copyright (c) 2019 Laser Microbeam and Medical Program
 
 Requirements:
-.NET Framework 4.0 - download http://www.microsoft.com/downloads/en/details.aspx?familyid=9cfb2d51-5ff4-4491-b0e5-b386f32c0992&displaylang=en
+.NET Core 3.0 - download https://dotnet.microsoft.com/download/dotnet-core/3.0
 
 Useful Tools:
 XML Notepad 2007 - download http://www.microsoft.com/downloads/en/details.aspx?FamilyID=72d6aa49-787d-4118-ba5f-4f30fe913628

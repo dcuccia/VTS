@@ -1,0 +1,90 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Real\SteadyState\musp0p5mua0" />
+    <None Remove="Resources\Real\SteadyState\musp0p5mua0p001" />
+    <None Remove="Resources\Real\SteadyState\musp0p5mua0p1" />
+    <None Remove="Resources\Real\SteadyState\musp0p7mua0" />
+    <None Remove="Resources\Real\SteadyState\musp0p7mua0p001" />
+    <None Remove="Resources\Real\SteadyState\musp0p7mua0p1" />
+    <None Remove="Resources\Real\SteadyState\musp1mua0" />
+    <None Remove="Resources\Real\SteadyState\musp1mua0p001" />
+    <None Remove="Resources\Real\SteadyState\musp1mua0p01" />
+    <None Remove="Resources\Real\SteadyState\musp1mua0p03" />
+    <None Remove="Resources\Real\SteadyState\musp1mua0p1" />
+    <None Remove="Resources\Real\SteadyState\musp1mua0p3" />
+    <None Remove="Resources\Real\SteadyState\musp1p2mua0" />
+    <None Remove="Resources\Real\SteadyState\musp1p2mua0p001" />
+    <None Remove="Resources\Real\SteadyState\musp1p2mua0p1" />
+    <None Remove="Resources\Real\SteadyState\musp1p5mua0" />
+    <None Remove="Resources\Real\SteadyState\musp1p5mua0p001" />
+    <None Remove="Resources\Real\SteadyState\musp1p5mua0p1" />
+    <None Remove="Resources\Real\SteadyState\musp2mua0" />
+    <None Remove="Resources\Real\SteadyState\musp2mua0p001" />
+    <None Remove="Resources\Real\SteadyState\musp2mua0p1" />
+    <None Remove="Resources\Real\TimeDomain\musp0p5mua0p001" />
+    <None Remove="Resources\Real\TimeDomain\musp0p5mua0p1" />
+    <None Remove="Resources\Real\TimeDomain\musp0p7mua0p001" />
+    <None Remove="Resources\Real\TimeDomain\musp0p7mua0p1" />
+    <None Remove="Resources\Real\TimeDomain\musp1mua0p001" />
+    <None Remove="Resources\Real\TimeDomain\musp1mua0p01" />
+    <None Remove="Resources\Real\TimeDomain\musp1mua0p03" />
+    <None Remove="Resources\Real\TimeDomain\musp1mua0p1" />
+    <None Remove="Resources\Real\TimeDomain\musp1mua0p3" />
+    <None Remove="Resources\Real\TimeDomain\musp1p2mua0p001" />
+    <None Remove="Resources\Real\TimeDomain\musp1p2mua0p1" />
+    <None Remove="Resources\Real\TimeDomain\musp1p5mua0p001" />
+    <None Remove="Resources\Real\TimeDomain\musp1p5mua0p1" />
+    <None Remove="Resources\Real\TimeDomain\musp2mua0p001" />
+    <None Remove="Resources\Real\TimeDomain\musp2mua0p1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp0p5mua0" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp0p5mua0p001" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp0p5mua0p1" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp0p7mua0" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp0p7mua0p001" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp0p7mua0p1" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp1mua0" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp1mua0p001" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp1mua0p01" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp1mua0p03" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp1mua0p1" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp1mua0p3" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp1p2mua0" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp1p2mua0p001" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp1p2mua0p1" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp1p5mua0" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp1p5mua0p001" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp1p5mua0p1" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp2mua0" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp2mua0p001" />
+    <EmbeddedResource Include="Resources\Real\SteadyState\musp2mua0p1" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp0p5mua0p001" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp0p5mua0p1" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp0p7mua0p001" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp0p7mua0p1" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp1mua0p001" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp1mua0p01" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp1mua0p03" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp1mua0p1" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp1mua0p3" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp1p2mua0p001" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp1p2mua0p1" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp1p5mua0p001" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp1p5mua0p1" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp2mua0p001" />
+    <EmbeddedResource Include="Resources\Real\TimeDomain\musp2mua0p1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Vts\Vts.csproj" />
+  </ItemGroup>
+</Project>
