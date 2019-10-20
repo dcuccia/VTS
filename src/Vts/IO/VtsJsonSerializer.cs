@@ -152,7 +152,6 @@ namespace Vts.IO
             _classBasename = classBasename ?? _interfaceType.Name.Substring(1);
             _typeCategoryString = typeCategoryString;
 
-            var useSingleton = false;
             var useDefaultConstructor = true;
             
             var classList =
@@ -174,7 +173,6 @@ namespace Vts.IO
                         _interfaceType,
                         item.ClassType,
                         item.ClassPrefixString, // use the prefix string to register each class
-                        useSingleton ? new ContainerControlledLifetimeManager() : null,
                         useDefaultConstructor ? new InjectionMember[] { new InjectionConstructor() } : null);
                 }
             }
