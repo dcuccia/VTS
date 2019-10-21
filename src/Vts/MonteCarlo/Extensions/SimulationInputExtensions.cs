@@ -25,7 +25,7 @@ namespace Vts.MonteCarlo.Extensions
             var result = data.Clone();
 
             // append sweep value to the output name
-            result.OutputName += ("_" + inputParameter + "_" + String.Format("{0:f}", value));
+            result.OutputName += ("_" + inputParameter + "_" + String.Format("{0:g}", value));
 
             var parameterString = inputParameter.ToLower().TrimEnd("0123456789".ToCharArray());
             var regionString = inputParameter.Substring(parameterString.Length);
@@ -38,6 +38,9 @@ namespace Vts.MonteCarlo.Extensions
 
             switch (parameterString)
             {
+                case "nphot":
+                    result.N = (long)value;
+                    break;
                 case "mua":
                     if (regionIndex >= 0 && result.TissueInput.Regions.Count() > regionIndex)
                         result.TissueInput.Regions[regionIndex].RegionOP.Mua = value;

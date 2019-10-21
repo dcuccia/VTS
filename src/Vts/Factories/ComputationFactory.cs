@@ -528,7 +528,7 @@ namespace Vts.Factories
         /// Method to generate absorbed energy given fluence and mua for heterogeneous tissue.
         /// </summary>
         /// <param name="fluence">fluence serialized to a 1D IEnumerable of double</param>
-        /// <param name="mua">absorption coefficient serialized to a 1D IEnumerable</param>
+        /// <param name="muas">absorption coefficient serialized to a 1D IEnumerable</param>
         /// <returns>absorbed energy in a 1D IEnumerable of double</returns>
         public static IEnumerable<double> GetAbsorbedEnergy(IEnumerable<double> fluence, IEnumerable<double> muas)
         {
@@ -631,10 +631,12 @@ namespace Vts.Factories
             var opticalPropertyGuess = (OpticalProperties[])(independentValues[0]);
             var fitParametersArray = opticalPropertyGuess.SelectMany(opgi => new[] { opgi.Mua, opgi.Musp, opgi.G, opgi.N }).ToArray();
             var parametersToFitArray = Enumerable.Range(0, opticalPropertyGuess.Count()).SelectMany(_ => parametersToFit).ToArray();
+            var lowerBoundsArray = Enumerable.Range(0, opticalPropertyGuess.Count()).SelectMany(_ => lowerBounds).ToArray();
+            var upperBoundsArray = Enumerable.Range(0, opticalPropertyGuess.Count()).SelectMany(_ => upperBounds).ToArray();
 
             Func<double[], object[], double[]> func = GetForwardReflectanceFuncForOptimization(forwardSolver, solutionDomainType);
 
-            var fit = optimizer.SolveWithConstraints(fitParametersArray, parametersToFitArray, lowerBounds, upperBounds, dependentValues.ToArray(),
+            var fit = optimizer.SolveWithConstraints(fitParametersArray, parametersToFitArray, lowerBoundsArray, upperBoundsArray, dependentValues.ToArray(),
                                       standardDeviationValues.ToArray(), func, independentValues.ToArray());
 
             return fit;
@@ -801,8 +803,16 @@ namespace Vts.Factories
                     switch (axis)
                     {
                         case IndependentVariableAxis.Rho:
+                            if (fs is TwoLayerSDAForwardSolver) // todo: future generalization to IMultiRegionForwardSolver?
+                            {
+                                return (fitData, otherData) => fs.FluenceOfRhoAndZAndFt(new[] { getLayerTissueRegionArray(fitData) }, (double[])otherData[0], (double[])otherData[1], new[] { (double)otherData[2] });
+                            }
                             return (fitData, otherData) => fs.FluenceOfRhoAndZAndFt(new[] { getOP(fitData) }, (double[])otherData[0], (double[])otherData[1], new[] { (double)otherData[2] });
                         case IndependentVariableAxis.Ft:
+                            if (fs is TwoLayerSDAForwardSolver) 
+                            {
+                                return (fitData, otherData) => fs.FluenceOfRhoAndZAndFt(new[] { getLayerTissueRegionArray(fitData) }, (double[])otherData[2], (double[])otherData[1], new[] { (double)otherData[0] });
+                            }
                             return (fitData, otherData) => fs.FluenceOfRhoAndZAndFt(new[] { getOP(fitData) }, new[] { (double)otherData[2] }, (double[])otherData[1], (double[])otherData[0]);
                         default:
                             throw new ArgumentOutOfRangeException("axis");

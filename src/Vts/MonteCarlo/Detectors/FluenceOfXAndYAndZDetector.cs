@@ -31,16 +31,6 @@ namespace Vts.MonteCarlo.Detectors
         }
 
         /// <summary>
-        /// detector identifier
-        /// </summary>
-        public string TallyType { get; set; }
-
-        /// <summary>
-        /// detector name
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
         /// x binning
         /// </summary>
         public DoubleRange X { get; set; }
@@ -145,6 +135,8 @@ namespace Vts.MonteCarlo.Detectors
             var iz = DetectorBinning.WhichBin(dp.Position.Z, Z.Count - 1, Z.Delta, Z.Start);
 
             var weight = _absorptionWeightingMethod(previousDP, dp, currentRegionIndex);
+            // Note: GetVolumeAbsorptionWeightingMethod in Initialize method determines the *absorbed* weight
+            //  so for fluence this weight is divided by Mua
 
             var regionIndex = currentRegionIndex;
 
