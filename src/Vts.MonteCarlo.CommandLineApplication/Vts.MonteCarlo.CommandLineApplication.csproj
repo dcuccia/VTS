@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Condition="'$(VisualStudioVersion)'>='16.0' or '$(VisualStudioVersion)'==''">
+    <PropertyGroup Condition="'$(VisualStudioVersion)'&gt;='16.0' or '$(VisualStudioVersion)'==''">
     <OutputType>Exe</OutputType>
     <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <AssemblyName>mc</AssemblyName>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='15.0'">
+  <PropertyGroup Condition="'$(VisualStudioVersion)'&lt;'16.0'">
     <OutputType>Exe</OutputType>
     <TargetFramework>net48</TargetFramework>
     <IsPackable>false</IsPackable>
