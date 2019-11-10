@@ -1,15 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <PropertyGroup Condition="'$(VisualStudioVersion)'&gt;='16.0' or '$(VisualStudioVersion)'==''">
+    <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Properties\**" />
-    <EmbeddedResource Remove="Properties\**" />
-    <None Remove="Properties\**" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(VisualStudioVersion)'&lt;'16.0'">
+    <TargetFramework>net48</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />

@@ -1,8 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
+    <PropertyGroup Condition="'$(VisualStudioVersion)'&gt;='16.0' or '$(VisualStudioVersion)'==''">
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <AssemblyName>mc_post</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(VisualStudioVersion)'&lt;'16.0'">
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
     <IsPackable>false</IsPackable>
     <AssemblyName>mc_post</AssemblyName>
   </PropertyGroup>

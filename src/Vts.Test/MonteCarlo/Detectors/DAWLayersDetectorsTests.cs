@@ -90,6 +90,8 @@ namespace Vts.Test.MonteCarlo.Detectors
                     new ROfXAndYDetectorInput() { X = new DoubleRange(-10.0, 10.0, 101), Y = new DoubleRange(-10.0, 10.0, 101) },
                     new ROfRhoAndOmegaDetectorInput() { Rho = new DoubleRange(0.0, 10.0, 101), Omega = new DoubleRange(0.05, 1.0, 20)}, // DJC - edited to reflect frequency sampling points (not bins)
                     new ROfFxDetectorInput() {Fx = new DoubleRange(0.0, 0.5, 51)},
+                    new ROfFxAndTimeDetectorInput() {Fx = new DoubleRange(0.0, 0.5, 51), Time = new DoubleRange(0.0, 1.0, 11)},
+                    new ROfFxAndAngleDetectorInput() {Fx = new DoubleRange(0.0, 0.5, 51), Angle = new DoubleRange(Math.PI / 2, Math.PI, 5)},
                     new TDiffuseDetectorInput(),
                     new TOfAngleDetectorInput() {Angle=new DoubleRange(0.0, Math.PI / 2, 2)},
                     new TOfRhoDetectorInput() {Rho=new DoubleRange(0.0, 10.0, 101)},
@@ -119,6 +121,17 @@ namespace Vts.Test.MonteCarlo.Detectors
                         Y = new DoubleRange(-10.0, 10.0, 11),
                         Z =  new DoubleRange(0.0, 10.0, 11),
                         Omega = new DoubleRange(0.05, 1.0, 20)
+                    },
+                    new FluenceOfRhoAndZAndOmegaDetectorInput()
+                    {
+                        Rho = new DoubleRange(0.0, 10.0, 11),
+                        Z =  new DoubleRange(0.0, 10.0, 11),
+                        Omega = new DoubleRange(0.05, 1.0, 20)
+                    },
+                    new FluenceOfFxAndZDetectorInput()
+                    {
+                        Fx = new DoubleRange(0.0, 0.5, 51),
+                        Z =  new DoubleRange(0.0, 10.0, 11),
                     },
                     new RadianceOfRhoAtZDetectorInput() {ZDepth=_dosimetryDepth, Rho= new DoubleRange(0.0, 10.0, 101)},
                     new RadianceOfRhoAndZAndAngleDetectorInput(){Rho= new DoubleRange(0.0, 10.0, 101),Z=new DoubleRange(0.0, 10.0, 101),Angle=new DoubleRange(0, Math.PI, 5)},
@@ -301,6 +314,28 @@ namespace Vts.Test.MonteCarlo.Detectors
             Assert.AreEqual(_outputOneLayerTissue.R_fx_TallyCount, 89);
             Assert.AreEqual(_outputTwoLayerTissue.R_fx_TallyCount, 89);
         }
+        // Reflection R(fx, time) validated with prior test
+        [Test]
+        public void validate_DAW_ROfFxAndTime()
+        {
+            Assert.Less(Math.Abs(_outputOneLayerTissue.R_fxt[1,0].Real - 3.66252), 0.00001);
+            Assert.Less(Math.Abs(_outputOneLayerTissue.R_fxt[1,0].Imaginary - 0.209453), 0.000001);
+            Assert.Less(Math.Abs(_outputTwoLayerTissue.R_fxt[1,0].Real - 3.66252), 0.00001);
+            Assert.Less(Math.Abs(_outputTwoLayerTissue.R_fxt[1,0].Imaginary - 0.209453), 0.000001);
+            Assert.AreEqual(_outputOneLayerTissue.R_fxt_TallyCount, 89);
+            Assert.AreEqual(_outputTwoLayerTissue.R_fxt_TallyCount, 89);
+        }
+        // Reflection R(fx, angle) validated with prior test
+        [Test]
+        public void validate_DAW_ROfFxAndAngle()
+        {
+            Assert.Less(Math.Abs(_outputOneLayerTissue.R_fxa[1,3].Real - 0.528540), 0.000001);
+            Assert.Less(Math.Abs(_outputOneLayerTissue.R_fxa[1,3].Imaginary - 0.022705), 0.000001);
+            Assert.Less(Math.Abs(_outputTwoLayerTissue.R_fxa[1,3].Real - 0.528540), 0.000001);
+            Assert.Less(Math.Abs(_outputTwoLayerTissue.R_fxa[1,3].Imaginary - 0.022705), 0.000001);
+            Assert.AreEqual(_outputOneLayerTissue.R_fxa_TallyCount, 89);
+            Assert.AreEqual(_outputTwoLayerTissue.R_fxa_TallyCount, 89);
+        }
         // Diffuse Transmittance
         [Test]
         public void validate_DAW_TDiffuse()
@@ -430,13 +465,93 @@ namespace Vts.Test.MonteCarlo.Detectors
             Assert.AreEqual(_outputTwoLayerTissue.Flu_xyz_TallyCount, 42334);
         }
         // Fluence Flu(x,y,z,omega), 1st moment validated with prior test
+        // Verify integral * mua over rho,z,omega equals ATotal
         [Test]
         public void validate_DAW_FluenceOfXAndYAndZAndOmega()
         {
             Assert.Less(Math.Abs(_outputOneLayerTissue.Flu_xyzw[0, 0, 0, 10].Real + 0.0002956), 0.0000001);
+            Assert.Less(Math.Abs(_outputOneLayerTissue.Flu_xyzw[0, 0, 0, 10].Imaginary + 0.0009234), 0.0000001);
+            Assert.Less(Math.Abs(_outputTwoLayerTissue.Flu_xyzw[0, 0, 0, 10].Real + 0.0002956), 0.0000001);
             Assert.Less(Math.Abs(_outputTwoLayerTissue.Flu_xyzw[0, 0, 0, 10].Imaginary + 0.0009234), 0.0000001);
+            // undo angle bin normalization
+            var x = ((FluenceOfXAndYAndZAndOmegaDetectorInput)_inputOneLayerTissue.DetectorInputs.
+                Where(d => d.TallyType == "FluenceOfXAndYAndZAndOmega").First()).X;
+            var y = ((FluenceOfXAndYAndZAndOmegaDetectorInput)_inputOneLayerTissue.DetectorInputs.
+                Where(d => d.TallyType == "FluenceOfXAndYAndZAndOmega").First()).Y;
+            var z = ((FluenceOfXAndYAndZAndOmegaDetectorInput)_inputOneLayerTissue.DetectorInputs.
+                Where(d => d.TallyType == "FluenceOfXAndYAndZAndOmega").First()).Z;
+            var norm = x.Delta * y.Delta * z.Delta;
+            var integral = 0.0;
+            for (int ix = 0; ix < x.Count - 1; ix++)
+            {
+                for (int iy = 0; iy < y.Count - 1; iy++)
+                {
+                    for (int iz = 0; iz < z.Count - 1; iz++)
+                    {
+                        integral += _outputOneLayerTissue.Flu_xyzw[ix, iy, iz, 0].Magnitude * norm; // tally only DC
+                    }
+                }
+            }
+            var mua = _inputOneLayerTissue.TissueInput.Regions[1].RegionOP.Mua;
+            Assert.Less(Math.Abs(integral * mua - _outputOneLayerTissue.Atot), 0.0006);
             Assert.AreEqual(_outputOneLayerTissue.Flu_xyzw_TallyCount, 42334);
             Assert.AreEqual(_outputTwoLayerTissue.Flu_xyzw_TallyCount, 42334);
+        }        
+        // Fluence Flu(rho,z,omega), 1st moment validated with prior test
+        // Verify integral * mua over rho,z,omega equals ATotal
+        [Test]
+        public void validate_DAW_FluenceOfRhoAndZAndOmega()
+        {
+            Assert.Less(Math.Abs(_outputOneLayerTissue.Flu_rzw[0, 0, 0].Real - 0.553938), 0.000001);
+            Assert.Less(Math.Abs(_outputOneLayerTissue.Flu_rzw[0, 0, 0].Imaginary + 0.001667), 0.000001);
+            Assert.Less(Math.Abs(_outputTwoLayerTissue.Flu_rzw[0, 0, 0].Real - 0.553938), 0.000001);
+            Assert.Less(Math.Abs(_outputTwoLayerTissue.Flu_rzw[0, 0, 0].Imaginary + 0.001667), 0.000001);
+            // undo angle bin normalization
+            var rho = ((FluenceOfRhoAndZAndOmegaDetectorInput) _inputOneLayerTissue.DetectorInputs
+                .Where(d => d.TallyType == "FluenceOfRhoAndZAndOmega").First()).Rho;
+            var z = ((FluenceOfRhoAndZAndOmegaDetectorInput) _inputOneLayerTissue.DetectorInputs
+                .Where(d => d.TallyType == "FluenceOfRhoAndZAndOmega").First()).Z;
+            var normFactor = 2.0 * Math.PI * rho.Delta * z.Delta;
+            var integral = 0.0;
+            for (int ir = 0; ir < rho.Count - 1; ir++)
+            {
+                var norm = (rho.Start + (ir + 0.5) * rho.Delta) * normFactor;
+                for (int iz = 0; iz < z.Count - 1; iz++)
+                {
+                    integral += _outputOneLayerTissue.Flu_rzw[ir, iz, 0].Magnitude * norm; // tally only DC
+                }
+            }
+
+            var mua = _inputOneLayerTissue.TissueInput.Regions[1].RegionOP.Mua;
+            Assert.Less(Math.Abs(integral * mua - _outputOneLayerTissue.Atot), 0.0008);
+            Assert.AreEqual(_outputOneLayerTissue.Flu_rzw_TallyCount, 42334);
+            Assert.AreEqual(_outputTwoLayerTissue.Flu_rzw_TallyCount, 42334);
+        }
+        // Fluence Flu(fx,z), 1st moment validated with prior test
+        // Verify integral * mua over z, with fx=0 equals ATotal
+        [Test]
+        public void validate_DAW_FluenceOfFxAndZ()
+        {
+            Assert.Less(Math.Abs(_outputOneLayerTissue.Flu_fxz[0, 0].Real - 5.768415), 0.000001);
+            Assert.Less(Math.Abs(_outputOneLayerTissue.Flu_fxz[0, 0].Imaginary + 0.0), 0.000001);
+            Assert.Less(Math.Abs(_outputTwoLayerTissue.Flu_fxz[0, 0].Real - 5.768415), 0.000001);
+            Assert.Less(Math.Abs(_outputTwoLayerTissue.Flu_fxz[0, 0].Imaginary + 0.0), 0.000001);
+            // undo angle bin normalization
+            var fx = ((FluenceOfFxAndZDetectorInput)_inputOneLayerTissue.DetectorInputs.
+                Where(d => d.TallyType == "FluenceOfFxAndZ").First()).Fx;
+            var z = ((FluenceOfFxAndZDetectorInput)_inputOneLayerTissue.DetectorInputs.
+                Where(d => d.TallyType == "FluenceOfFxAndZ").First()).Z;
+            var norm = z.Delta;
+            var integral = 0.0;
+            for (int iz = 0; iz < z.Count - 1; iz++)
+            {
+                integral += _outputOneLayerTissue.Flu_fxz[0, iz].Magnitude * norm; // tally only DC
+            }
+            
+            var mua = _inputOneLayerTissue.TissueInput.Regions[1].RegionOP.Mua;
+            Assert.Less(Math.Abs(integral * mua - _outputOneLayerTissue.Atot), 1e-6);
+            Assert.AreEqual(_outputOneLayerTissue.Flu_fxz_TallyCount, 42334);
+            Assert.AreEqual(_outputTwoLayerTissue.Flu_fxz_TallyCount, 42334);
         }
         // Volume Radiance Rad(rho,z,angle)
         // Verify integral over angle of Radiance equals Fluence

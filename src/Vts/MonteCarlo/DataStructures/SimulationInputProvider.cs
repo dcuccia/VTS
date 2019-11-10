@@ -28,13 +28,17 @@ namespace Vts.MonteCarlo
                 PointSourceTwoLayerTissueROfRhoDetector(),
                 PointSourceTwoLayerTissueROfRhoDetectorWithPhotonDatabase(),
                 PointSourceSingleEllipsoidTissueFluenceOfRhoAndZDetector(),
+                PointSourceSingleInfiniteCylinderTissueAOfXAndYAndZDetector(),
+                PointSourceMultiInfiniteCylinderTissueAOfXAndYAndZDetector(),
                 pMCPointSourceOneLayerTissueROfRhoDAW(),
-                GaussianSourceOneLayerTissueROfRhoDetector(),
-                FlatSourceOneLayerTissueROfRhoDetector(),
+                Gaussian2DSourceOneLayerTissueROfRhoDetector(),
+                Flat2DSourceOneLayerTissueROfRhoDetector(),
+                GaussianLineSourceOneLayerTissueROfRhoDetector(),
                 PointSourceMultiLayerMomentumTransferDetectors(),
                 PointSourceSingleVoxelTissueROfXAndYAndFluenceOfXAndYAndZDetector(),
                 PointSourceThreeLayerReflectedTimeOfRhoAndSubregionHistDetector(),
-                EmbeddedDirectionalCircularSourceEllipTissueFluenceOfXAndYAndZ()
+                EmbeddedDirectionalCircularSourceEllipTissueFluenceOfXAndYAndZ(),
+                FluorescenceEmissionAOfXAndYAndZSourceInfiniteCylinder()
             };
         }
 
@@ -275,9 +279,9 @@ namespace Vts.MonteCarlo
         }
         #endregion
 
-        #region point source single ellipsoid Fluence(rho)
+        #region point source single ellipsoid Fluence(rho,z)
         /// <summary>
-        /// Point source, single ellipsoid tissue definition, only ROfRho detector included
+        /// Point source, single ellipsoid tissue definition, only FluenceOfRhoAndZ detector included
         /// </summary>
         public static SimulationInput PointSourceSingleEllipsoidTissueFluenceOfRhoAndZDetector()
         {
@@ -321,6 +325,118 @@ namespace Vts.MonteCarlo
                 new List<IDetectorInput>()
                 {
                     new FluenceOfRhoAndZDetectorInput(){Rho=new DoubleRange(0.0, 10, 101),Z= new DoubleRange(0.0, 10, 101)}
+                }
+            );
+        }
+        #endregion
+
+        #region point source single infinite cylinder A(x,y,z)
+        /// <summary>
+        /// Point source, single infinite cylinder tissue definition, only AOfXAndYAndZ detector included
+        /// </summary>
+        public static SimulationInput PointSourceSingleInfiniteCylinderTissueAOfXAndYAndZDetector()
+        {
+            return new SimulationInput(
+                100,
+                "infinite_cylinder_AOfXAndYAndZ",
+                new SimulationOptions(
+                    0, // random number generator seed, -1=random seed, 0=fixed seed
+                    RandomNumberGeneratorType.MersenneTwister,
+                    AbsorptionWeightingType.Discrete,
+                    PhaseFunctionType.HenyeyGreenstein,
+                    new List<DatabaseType>() { }, // databases to be written
+                    false, // track statistics
+                    0.0, // RR threshold -> no RR performed
+                    0),
+                new DirectionalPointSourceInput(
+                    new Position(0.0, 0.0, 0.0),
+                    new Direction(0.0, 0.0, 1.0),
+                    0), // 0=start in air, 1=start in tissue
+                new SingleInfiniteCylinderTissueInput(
+                    new InfiniteCylinderTissueRegion(
+                        new Position(0, 0, 1),
+                        1.0,
+                        new OpticalProperties(0.05, 1.0, 0.8, 1.4)
+                    ),
+                    new ITissueRegion[]
+                    {
+                        new LayerTissueRegion(
+                            new DoubleRange(double.NegativeInfinity, 0.0),
+                            new OpticalProperties(0.0, 1e-10, 1.0, 1.0)),
+                        new LayerTissueRegion(
+                            new DoubleRange(0.0, 100.0),
+                            new OpticalProperties(0.01, 1.0, 0.8, 1.4)),
+                        new LayerTissueRegion(
+                            new DoubleRange(100.0, double.PositiveInfinity),
+                            new OpticalProperties(0.0, 1e-10, 1.0, 1.0))
+                    }
+                ),
+                new List<IDetectorInput>()
+                {
+                    new AOfXAndYAndZDetectorInput(){
+                        X =new DoubleRange(-10, 10, 201),
+                        Y =new DoubleRange(-10, 10, 2),
+                        Z =new DoubleRange(0, 10, 101)}
+                }
+            );
+        }
+        #endregion
+
+        #region point source multi infinite cylinder A(x,y,z)
+        /// <summary>
+        /// Point source, multi infinite cylinder tissue definition, only AOfXAndYAndZ detector included
+        /// </summary>
+        public static SimulationInput PointSourceMultiInfiniteCylinderTissueAOfXAndYAndZDetector()
+        {
+            return new SimulationInput(
+                100,
+                "multi_infinite_cylinder_AOfXAndYAndZ",
+                new SimulationOptions(
+                    0, // random number generator seed, -1=random seed, 0=fixed seed
+                    RandomNumberGeneratorType.MersenneTwister,
+                    AbsorptionWeightingType.Discrete,
+                    PhaseFunctionType.HenyeyGreenstein,
+                    new List<DatabaseType>() { }, // databases to be written
+                    false, // track statistics
+                    0.0, // RR threshold -> no RR performed
+                    0),
+                new DirectionalPointSourceInput(
+                    new Position(0.0, 0.0, 0.0),
+                    new Direction(0.0, 0.0, 1.0),
+                    0), // 0=start in air, 1=start in tissue
+                new MultiConcentricInfiniteCylinderTissueInput(
+new ITissueRegion[]
+                    {
+                        new InfiniteCylinderTissueRegion(
+                            new Position(0, 0, 1),
+                            1.0,
+                            new OpticalProperties(0.05, 1.0, 0.8, 1.4)
+                        ),
+                        new InfiniteCylinderTissueRegion(
+                            new Position(0, 0, 1),
+                            0.75,
+                            new OpticalProperties(0.05, 1.0, 0.8, 1.4)
+                        ),
+                    },
+        new ITissueRegion[]
+                    {
+                    new LayerTissueRegion(
+                        new DoubleRange(double.NegativeInfinity, 0.0),
+                        new OpticalProperties(0.0, 1e-10, 1.0, 1.0)),
+                    new LayerTissueRegion(
+                        new DoubleRange(0.0, 100.0),
+                        new OpticalProperties(0.01, 1.0, 0.8, 1.4)),
+                    new LayerTissueRegion(
+                        new DoubleRange(100.0, double.PositiveInfinity),
+                        new OpticalProperties(0.0, 1e-10, 1.0, 1.0))
+                    }
+                ),
+                new List<IDetectorInput>()
+                {
+                    new AOfXAndYAndZDetectorInput(){
+                        X =new DoubleRange(-10, 10, 201),
+                        Y =new DoubleRange(-10, 10, 2),
+                        Z =new DoubleRange(0, 10, 101)},
                 }
             );
         }
@@ -373,15 +489,15 @@ namespace Vts.MonteCarlo
         }
         #endregion
 
-        #region Gaussian source one layer R(rho)
+        #region Gaussian 2D source one layer R(rho)
         /// <summary>
-        /// Gaussian source, single tissue layer definition, only ROfRho detector included
+        /// Gaussian 2D source, single tissue layer definition, only ROfRho detector included
         /// </summary>
-        public static SimulationInput GaussianSourceOneLayerTissueROfRhoDetector()
+        public static SimulationInput Gaussian2DSourceOneLayerTissueROfRhoDetector()
         {
             return new SimulationInput(
                 100,
-                "Gaussian_source_one_layer_ROfRho",
+                "Gaussian_2D_source_one_layer_ROfRho",
                 new SimulationOptions(
                     0, // random number generator seed, -1=random seed, 0=fixed seed
                     RandomNumberGeneratorType.MersenneTwister,
@@ -426,15 +542,15 @@ namespace Vts.MonteCarlo
         }
         #endregion
 
-        #region Flat source one layer R(rho)
+        #region Flat 2D source one layer R(rho)
         /// <summary>
-        /// Flat source, single tissue layer definition, only ROfRho detector included
+        /// Flat 2D source, single tissue layer definition, only ROfRho detector included
         /// </summary>
-        public static SimulationInput FlatSourceOneLayerTissueROfRhoDetector()
+        public static SimulationInput Flat2DSourceOneLayerTissueROfRhoDetector()
         {
             return new SimulationInput(
                 100,
-                "Flat_source_one_layer_ROfRho",
+                "Flat_2D_source_one_layer_ROfRho",
                 new SimulationOptions(
                     0, // random number generator seed, -1=random seed, 0=fixed seed
                     RandomNumberGeneratorType.MersenneTwister,
@@ -457,6 +573,58 @@ namespace Vts.MonteCarlo
                 new MultiLayerTissueInput(
                     new ITissueRegion[]
                     { 
+                        new LayerTissueRegion(
+                            new DoubleRange(double.NegativeInfinity, 0.0),
+                            new OpticalProperties(0.0, 1e-10, 1.0, 1.0)),
+                        new LayerTissueRegion(
+                            new DoubleRange(0.0, 100.0),
+                            new OpticalProperties(0.01, 1.0, 0.8, 1.4)),
+                        new LayerTissueRegion(
+                            new DoubleRange(100.0, double.PositiveInfinity),
+                            new OpticalProperties(0.0, 1e-10, 1.0, 1.0))
+                    }
+                ),
+                new List<IDetectorInput>()
+                {
+                    new ROfRhoDetectorInput
+                    {
+                        Rho =new DoubleRange(0.0, 10, 101)
+                    },
+                }
+             );
+        }
+        #endregion
+
+        #region Gaussian line source one layer R(rho)
+        /// <summary>
+        /// Gaussian line source, single tissue layer definition, only ROfRho detector included
+        /// </summary>
+        public static SimulationInput GaussianLineSourceOneLayerTissueROfRhoDetector()
+        {
+            return new SimulationInput(
+                100,
+                "Gaussian_line_source_one_layer_ROfRho",
+                new SimulationOptions(
+                    0, // random number generator seed, -1=random seed, 0=fixed seed
+                    RandomNumberGeneratorType.MersenneTwister,
+                    AbsorptionWeightingType.Discrete,
+                    PhaseFunctionType.HenyeyGreenstein,
+                    new List<DatabaseType>() { }, // databases to be written
+                    false, // track statistics
+                    0.0, // RR threshold -> 0 = no RR performed
+                    0),
+                new CustomLineSourceInput(
+                    3.0, // line length
+                    new GaussianSourceProfile(1.0), // fwhm
+                    new DoubleRange(0.0, 0.0), // polar angle emission range
+                    new DoubleRange(0.0, 0.0), // azimuthal angle emmision range
+                    new Direction(0, 0, 1), // normal to tissue
+                    new Position(0, 0, 0), // center of beam on surface
+                    new PolarAzimuthalAngles(0, 0), // no beam rotation         
+                    0), // 0=start in air, 1=start in tissue
+                new MultiLayerTissueInput(
+                    new ITissueRegion[]
+                    {
                         new LayerTissueRegion(
                             new DoubleRange(double.NegativeInfinity, 0.0),
                             new OpticalProperties(0.0, 1e-10, 1.0, 1.0)),
@@ -575,6 +743,21 @@ namespace Vts.MonteCarlo
                         Z= new DoubleRange(0.0, 10.0, 11),
                         MTBins=new DoubleRange(0.0, 500.0, 51), // MT bins
                         FractionalMTBins = new DoubleRange(0.0, 1.0, 11), // fractional MT bins
+                        BloodVolumeFraction = new List<double>() { 0, 0.5, 0.5, 0 },
+                        TallySecondMoment = true},
+                    // SFD detectors
+                    new ReflectedDynamicMTOfFxAndSubregionHistDetectorInput(){
+                        Fx=new DoubleRange(0.0, 0.5, 11), // fx bins                
+                        Z= new DoubleRange(0.0, 10.0, 11),
+                        MTBins=new DoubleRange(0.0, 500.0, 51), // MT bins
+                        FractionalMTBins = new DoubleRange(0.0, 1.0, 11), // fractional MT bins                        
+                        BloodVolumeFraction = new List<double>() { 0, 0.5, 0.5, 0 },
+                        TallySecondMoment = true},
+                    new TransmittedDynamicMTOfFxAndSubregionHistDetectorInput(){
+                        Fx=new DoubleRange(0.0, 0.5, 11), // fx bins                
+                        Z= new DoubleRange(0.0, 10.0, 11),
+                        MTBins=new DoubleRange(0.0, 500.0, 51), // MT bins
+                        FractionalMTBins = new DoubleRange(0.0, 1.0, 11), // fractional MT bins                        
                         BloodVolumeFraction = new List<double>() { 0, 0.5, 0.5, 0 },
                         TallySecondMoment = true},
                 }
@@ -741,6 +924,57 @@ namespace Vts.MonteCarlo
                 {
                     // units space[mm], time[ns], temporal-freq[GHz], abs./scat. coeff[/mm]    
                     new FluenceOfXAndYAndZDetectorInput(){X=new DoubleRange(-5, 5, 100),Y=new DoubleRange(-5, 5, 100),Z=new DoubleRange(0, 10, 101)},
+                }
+            );
+        }
+        #endregion
+
+        #region fluorescence emission source based on AOfXAndYAndZ of prior simulation this pairs 
+        /// <summary>
+        /// </summary>
+        public static SimulationInput FluorescenceEmissionAOfXAndYAndZSourceInfiniteCylinder()
+        {
+            return new SimulationInput(
+                100,
+                "fluorescenceEmissionAOfXAndYAndZSourceInfiniteCylinder",
+                new SimulationOptions(
+                    0, // random number generator seed, -1=random seed, 0=fixed seed
+                    RandomNumberGeneratorType.MersenneTwister,
+                    AbsorptionWeightingType.Discrete,
+                    PhaseFunctionType.HenyeyGreenstein,
+                    new List<DatabaseType>() { }, // databases to be written
+                    false, // track statistics
+                    0.0, // RR threshold -> no RR performed
+                    0),
+                // pairs w above infinite_cylinder_ROfRho_FluenceOfRhoAndZ
+                new FluorescenceEmissionAOfXAndYAndZSourceInput( 
+                    "infinite_cylinder_AOfXAndYAndZ",
+                    "infinite_cylinder_AOfXAndYAndZ.txt",
+                    3
+                    ),
+                new SingleInfiniteCylinderTissueInput(
+                    new InfiniteCylinderTissueRegion(
+                        new Position(0, 0, 1),
+                        1.0,
+                        new OpticalProperties(0.05, 1.0, 0.8, 1.4)
+                    ),
+                    new ITissueRegion[]
+                    {
+                        new LayerTissueRegion(
+                            new DoubleRange(double.NegativeInfinity, 0.0),
+                            new OpticalProperties(0.0, 1e-10, 1.0, 1.0)),
+                        new LayerTissueRegion(
+                            new DoubleRange(0.0, 100.0),
+                            new OpticalProperties(0.01, 1.0, 0.8, 1.4)),
+                        new LayerTissueRegion(
+                            new DoubleRange(100.0, double.PositiveInfinity),
+                            new OpticalProperties(0.0, 1e-10, 1.0, 1.0))
+                    }
+                ),
+                new List<IDetectorInput>()
+                {
+                    new ROfXAndYDetectorInput() {X=new DoubleRange(-10, 10, 101),
+                        Y = new DoubleRange(-100.0, 100.0, 2)},
                 }
             );
         }

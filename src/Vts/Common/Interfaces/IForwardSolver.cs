@@ -291,7 +291,7 @@ namespace Vts
         /// separations 'rhos'and temporal frequencies fts
         /// </summary>
         /// <param name="regions">medium optical and geometrical properties for each sub-region</param>
-        /// <param name="rho">source-detector separation (mm)</param>
+        /// <param name="fx">spatial-frequency</param>
         /// <param name="fts">temporal frequencies</param>
         /// <returns></returns>
         Complex[] ROfFxAndFt(IOpticalPropertyRegion[] regions, double fx, double[] fts);
@@ -345,6 +345,29 @@ namespace Vts
         /// <param name="zs">depth bins</param>
         /// <returns></returns>
         IEnumerable<double> FluenceOfRhoAndZ(IEnumerable<IOpticalPropertyRegion[]> regions, IEnumerable<double> rhos, IEnumerable<double> zs);
+        #endregion
+        #region Complex[] FluenceOfRhoAndZAndFt(IOpticalPropertyRegion[][] regions, double[] rhos, double[] zs, double[] fts);
+        /// <summary>
+        ///  Overload of scalar FluenceOfRhoAndZ function. Determines fluence of tissue 'regions' and source-detector separations 'rhos' and 'zs'
+        ///  at temporal frequencies fts
+        /// </summary>
+        /// <param name="regions">tissue regions</param>
+        /// <param name="rhos">source-detector separations</param>
+        /// <param name="zs">depth bins</param>
+        /// <param name="fts">temporal frequencies</param>
+        /// <returns></returns>
+        Complex[] FluenceOfRhoAndZAndFt(IOpticalPropertyRegion[][] regions, double[] rhos, double[] zs, double[] fts);
+
+        /// <summary>
+        ///  Overload of scalar FluenceOfRhoAndZAndFt function. Determines fluence of tissue 'regions' and source-detector separations 'rhos' and 'zs'
+        ///  at temporal frequencies fts
+        /// </summary>
+        /// <param name="regions">tissue regions</param>
+        /// <param name="rhos">source-detector separations</param>
+        /// <param name="zs">depth bins</param>
+        /// <param name="fts">temporal frequencies</param>
+        /// <returns></returns>
+        IEnumerable<Complex> FluenceOfRhoAndZAndFt(IEnumerable<IOpticalPropertyRegion[]> regions, IEnumerable<double> rhos, IEnumerable<double> zs, IEnumerable<double> fts);
         #endregion
 
         #endregion // IMultiRegionForwardSolver
@@ -443,7 +466,7 @@ namespace Vts
         IEnumerable<double> FluenceOfRhoAndZAndTime(IEnumerable<OpticalProperties> ops, IEnumerable<double> rhos, IEnumerable<double> zs, IEnumerable<double> ts);
         #endregion
 
-        #region IEnumerable<double> FluenceOfRhoAndZAndFt(IEnumerable<OpticalProperties> ops, IEnumerable<double> rhos, IEnumerable<double> zs, IEnumerable<double> fts);
+        #region IEnumerable<Complex> FluenceOfRhoAndZAndFt(IEnumerable<OpticalProperties> ops, IEnumerable<double> rhos, IEnumerable<double> zs, IEnumerable<double> fts);
         /// <summary>
         /// Overload of scalar FluenceOfRhoAndZAndFt function. Determines reflectances at optical properties 'ops', source-detector separations 'rhos' and time frequencies 'fts'
         /// </summary>

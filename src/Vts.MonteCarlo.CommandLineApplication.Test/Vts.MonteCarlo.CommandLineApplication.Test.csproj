@@ -1,7 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <PropertyGroup Condition="'$(VisualStudioVersion)'&gt;='16.0' or '$(VisualStudioVersion)'==''">
+    <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(VisualStudioVersion)'&lt;'16.0'">
+    <TargetFramework>net48</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -13,6 +18,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Vts.MonteCarlo.CommandLineApplication\Vts.MonteCarlo.CommandLineApplication.csproj" />
+    <EmbeddedResource Include="Resources\infile_unit_test_one_layer_ROfRho_Mus_only.txt" />
+    <EmbeddedResource Include="Resources\infile_unit_test_one_layer_ROfRho_Musp_and_Mus_inconsistent.txt" />
+    <EmbeddedResource Include="Resources\infile_unit_test_one_layer_ROfRho_Musp_only.txt" />
     <ProjectReference Include="..\Vts\Vts.csproj" />
   </ItemGroup>
 
