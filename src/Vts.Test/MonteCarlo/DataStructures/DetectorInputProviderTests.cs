@@ -2,11 +2,8 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Vts.Common;
-using Vts.IO;
 using Vts.MonteCarlo;
 using Vts.MonteCarlo.Detectors;
-using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Tissues;
 
 namespace Vts.Test.MonteCarlo
 {
@@ -16,7 +13,7 @@ namespace Vts.Test.MonteCarlo
         [Test]
         public void validate_GenerateAllDetectorInputs_returns_non_empty_list_of_ISourceInputs()
         {
-            var allDetectorInputs = Vts.MonteCarlo.DetectorInputProvider.GenerateAllDetectorInputs();
+            var allDetectorInputs = Vts.MonteCarlo.DetectorInputProvider.GetAllDetectorInputs();
 
             Assert.NotNull(allDetectorInputs);
             Assert.True(allDetectorInputs.Count > 0);

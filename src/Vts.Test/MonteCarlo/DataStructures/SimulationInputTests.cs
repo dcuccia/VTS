@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Vts.IO;
 using Vts.MonteCarlo;
-using Vts.MonteCarlo.Sources;
-using Vts.MonteCarlo.Tissues;
 
 namespace Vts.Test.MonteCarlo
 {
@@ -65,10 +63,24 @@ namespace Vts.Test.MonteCarlo
                 100,
                 "results",
                 new SimulationOptions(),
-                new DirectionalPointSourceInput(),
-                new MultiLayerTissueInput(),
+                new Vts.MonteCarlo.Sources.DirectionalPointSourceInput(),
+                new Vts.MonteCarlo.Tissues.MultiLayerTissueInput(),
                 null
                 );
+            Assert.IsTrue(si.DetectorInputs.Count == 0);
+        }
+
+        [Test]
+        public void validate_dependencies_can_be_constructed_by_providers()
+        {
+            var si = new SimulationInput(
+                100,
+                "results",
+                new SimulationOptions(),
+                SourceInputProvider.DirectionalPointSourceInput(),
+                TissueInputProvider.MultiLayerTissueInput(),
+                new[] { DetectorInputProvider.RDiffuseDetectorInput() }
+            );
             Assert.IsTrue(si.DetectorInputs.Count == 0);
         }
     }

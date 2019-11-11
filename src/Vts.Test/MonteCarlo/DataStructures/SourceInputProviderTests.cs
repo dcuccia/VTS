@@ -11,16 +11,42 @@ using Vts.MonteCarlo.Tissues;
 
 namespace Vts.Test.MonteCarlo
 {
+    public class MockSourceInput : ISourceInput
+    {
+        public string SourceType { get; set; }
+        public int InitialTissueRegionIndex { get; set; }
+        public ISource CreateSource(Random rng = null)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     [TestFixture]
     public class SourceInputProviderTests
     {
         [Test]
-        public void validate_GenerateAllSourceInputs_returns_non_empty_list_of_ISourceInputs()
+        public void validate_GetAllSourceInputs_returns_non_empty_list_of_ISourceInputs()
         {
-            var allSourceInputs = Vts.MonteCarlo.SourceInputProvider.GenerateAllSourceInputs();
+            var allSourceInputs = Vts.MonteCarlo.SourceInputProvider.GetAllSourceInputs();
 
             Assert.NotNull(allSourceInputs);
             Assert.True(allSourceInputs.Count > 0);
+        }
+
+        [Test]
+        public void validate_GetSourceInput_returns_non_null_ISourceInput_for_built_in_implementation()
+        {
+            var isotropicSourceInput = Vts.MonteCarlo.SourceInputProvider.GetSourceInput<IsotropicPointSourceInput>();
+
+            Assert.NotNull(isotropicSourceInput);
+        }
+
+        [Test]
+        public void validate_GetSourceInput_returns_non_null_ISourceInput_for_client_implementation()
+        {
+            var isotropicSourceInput = Vts.MonteCarlo.SourceInputProvider.GetSourceInput<MockSourceInput>();
+
+            Assert.NotNull(isotropicSourceInput);
         }
 
         [Test]

@@ -1,11 +1,7 @@
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
-using Vts.Common;
-using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Sources;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Vts.MonteCarlo
 {
@@ -14,64 +10,70 @@ namespace Vts.MonteCarlo
     /// </summary>
     public class SourceInputProvider
     {
+        private static readonly IServiceProvider ServiceProvider;
+
+        static SourceInputProvider()
+        {
+            var collection = new ServiceCollection()
+                .Scan(scan =>
+                    scan.FromApplicationDependencies()
+                        //.AddClasses(classes => classes.AssignableTo<ISourceInput>())
+                        //    .AsImplementedInterfaces()
+                        //    .WithTransientLifetime()
+                    .AddClasses(classes => classes.AssignableTo<ISourceInput>())
+                        .AsSelfWithInterfaces()
+                        .WithTransientLifetime()
+                    );
+
+            ServiceProvider = collection.BuildServiceProvider();
+        }
+
         /// <summary>
-        /// Method that provides instances of all inputs in this class.
+        /// Method that provides instances of all ISourceInput implementations in all running assemblies, including those in client code
         /// </summary>
         /// <returns>a list of the ISourceInputs generated</returns>
-        public static IList<ISourceInput> GenerateAllSourceInputs()
+        public static IList<ISourceInput> GetAllSourceInputs()
         {
-            return new ISourceInput[]
-            {
-                new DirectionalPointSourceInput(),
-                new IsotropicPointSourceInput(),
-                new CustomPointSourceInput(),
-                new DirectionalLineSourceInput(),
-                new IsotropicLineSourceInput(),
-                new CustomLineSourceInput(),
-                new DirectionalCircularSourceInput(),
-                new CustomCircularSourceInput(),
-                new DirectionalEllipticalSourceInput(),
-                new CustomEllipticalSourceInput(),
-                new DirectionalRectangularSourceInput(),
-                new CustomRectangularSourceInput(),
-                new LambertianSurfaceEmittingCylindricalFiberSourceInput(),
-                new LambertianSurfaceEmittingSphericalSourceInput(),
-                new CustomSurfaceEmittingSphericalSourceInput(),
-                new LambertianSurfaceEmittingCuboidalSourceInput(),
-                new LambertianSurfaceEmittingTubularSourceInput(),
-                new IsotropicVolumetricCuboidalSourceInput(),
-                new CustomVolumetricCuboidalSourceInput(),
-                new IsotropicVolumetricEllipsoidalSourceInput(),
-                new CustomVolumetricEllipsoidalSourceInput(),
-            };
-            //Func<Type, ISourceInput> createInstanceOrReturnNull = type =>
-            // {
-            //     try
-            //     {
-            //         return (ISourceInput)type.GetConstructor(new Type[] { }).Invoke(new object[] { });
-            //         //return (ISourceInput)Activator.CreateInstance(type);
-            //     }
-            //     catch
-            //     {
-            //         return null;
-            //     }
-            // };
+            var sourceInputs = ServiceProvider.GetServices<ISourceInput>().ToArray();
 
-            //var allTypes = Assembly.GetExecutingAssembly().GetTypes();
-
-            //foreach (var type in allTypes)
-            //{
-            //    Console.WriteLine(type);
-            //}
-
-            //var validTypes = 
-            //    from type in allTypes
-            //    where type.IsClass && type.Namespace == nameof(Vts.MonteCarlo.Sources) && type.Name.EndsWith("SourceInput")
-            //    select type;
-
-            //var sourceInputs = validTypes.Select(type => createInstanceOrReturnNull(type));
-
-            //return sourceInputs.ToArray();
+            return sourceInputs;
         }
+
+        /// <summary>
+        /// Method that provides an instance of the specified ISourceInput implementation from any assembly, including those in client code
+        /// </summary>
+        /// <returns>the ISourceInput generated</returns>
+        public static ISourceInput GetSourceInput<TSourceInput>() where TSourceInput : ISourceInput
+        {
+            var sourceInput = ServiceProvider.GetService<TSourceInput>();
+
+            return sourceInput;
+        }
+
+        #region Built-in SourceInput helpers (caller doesn't need to reference Vts.MonteCarlo.Sources)
+
+        public static ISourceInput DirectionalPointSourceInput() { return new Vts.MonteCarlo.Sources.DirectionalPointSourceInput(); }
+        public static ISourceInput IsotropicPointSourceInput() { return new Vts.MonteCarlo.Sources.IsotropicPointSourceInput(); }
+        public static ISourceInput CustomPointSourceInput() { return new Vts.MonteCarlo.Sources.CustomPointSourceInput(); }
+        public static ISourceInput DirectionalLineSourceInput() { return new Vts.MonteCarlo.Sources.DirectionalLineSourceInput(); }
+        public static ISourceInput IsotropicLineSourceInput() { return new Vts.MonteCarlo.Sources.IsotropicLineSourceInput(); }
+        public static ISourceInput CustomLineSourceInput() { return new Vts.MonteCarlo.Sources.CustomLineSourceInput(); }
+        public static ISourceInput DirectionalCircularSourceInput() { return new Vts.MonteCarlo.Sources.DirectionalCircularSourceInput(); }
+        public static ISourceInput CustomCircularSourceInput() { return new Vts.MonteCarlo.Sources.CustomCircularSourceInput(); }
+        public static ISourceInput DirectionalEllipticalSourceInput() { return new Vts.MonteCarlo.Sources.DirectionalEllipticalSourceInput(); }
+        public static ISourceInput CustomEllipticalSourceInput() { return new Vts.MonteCarlo.Sources.CustomEllipticalSourceInput(); }
+        public static ISourceInput DirectionalRectangularSourceInput() { return new Vts.MonteCarlo.Sources.DirectionalRectangularSourceInput(); }
+        public static ISourceInput CustomRectangularSourceInput() { return new Vts.MonteCarlo.Sources.CustomRectangularSourceInput(); }
+        public static ISourceInput LambertianSurfaceEmittingCylindricalFiberSourceInput() { return new Vts.MonteCarlo.Sources.LambertianSurfaceEmittingCylindricalFiberSourceInput(); }
+        public static ISourceInput LambertianSurfaceEmittingSphericalSourceInput() { return new Vts.MonteCarlo.Sources.LambertianSurfaceEmittingSphericalSourceInput(); }
+        public static ISourceInput CustomSurfaceEmittingSphericalSourceInput() { return new Vts.MonteCarlo.Sources.CustomSurfaceEmittingSphericalSourceInput(); }
+        public static ISourceInput LambertianSurfaceEmittingCuboidalSourceInput() { return new Vts.MonteCarlo.Sources.LambertianSurfaceEmittingCuboidalSourceInput(); }
+        public static ISourceInput LambertianSurfaceEmittingTubularSourceInput() { return new Vts.MonteCarlo.Sources.LambertianSurfaceEmittingTubularSourceInput(); }
+        public static ISourceInput IsotropicVolumetricCuboidalSourceInput() { return new Vts.MonteCarlo.Sources.IsotropicVolumetricCuboidalSourceInput(); }
+        public static ISourceInput CustomVolumetricCuboidalSourceInput() { return new Vts.MonteCarlo.Sources.CustomVolumetricCuboidalSourceInput(); }
+        public static ISourceInput IsotropicVolumetricEllipsoidalSourceInput() { return new Vts.MonteCarlo.Sources.IsotropicVolumetricEllipsoidalSourceInput(); }
+        public static ISourceInput CustomVolumetricEllipsoidalSourceInput() { return new Vts.MonteCarlo.Sources.CustomVolumetricEllipsoidalSourceInput(); }
+
+        #endregion
     }
 }

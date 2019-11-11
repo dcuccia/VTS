@@ -14,6 +14,11 @@
     <AssemblyName>mgrte</AssemblyName>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Vts\Vts.csproj" />
   </ItemGroup>

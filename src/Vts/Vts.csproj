@@ -19,6 +19,11 @@
     <AssemblyVersion>5.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="MonteCarlo\VirtualBoundaries\PlanarReflectionVirtualBoundary.cs" />
     <Compile Remove="MonteCarlo\VirtualBoundaries\PlanarTransmissionVirtualBoundary.cs" />
@@ -100,9 +105,11 @@
     <PackageReference Include="csmpfit" Version="1.1.1" />
     <PackageReference Include="MathNet.Numerics" Version="4.9.0" />
     <PackageReference Include="Meta.Numerics" Version="4.0.7" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="NLog" Version="4.6.7" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0-preview2.19523.17" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0-preview2.19525.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="NLog" Version="4.6.8" />
+    <PackageReference Include="Scrutor" Version="3.1.0" />
     <PackageReference Include="System.Reactive" Version="4.2.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="Unity" Version="5.11.1" />

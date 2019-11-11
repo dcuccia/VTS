@@ -71,6 +71,16 @@ namespace Vts.MonteCarlo
                 DetectorInputs = new List<IDetectorInput>() {};
             }
         }
+
+        /// <summary>
+        /// Uses all defaults but assigns name
+        /// </summary>
+        /// <param outputName="outputName"></param>
+        public SimulationInput(string outputName) : this()
+        {
+            OutputName = outputName;
+        }
+
         /// <summary>
         /// SimulationInput default constructor
         /// </summary>

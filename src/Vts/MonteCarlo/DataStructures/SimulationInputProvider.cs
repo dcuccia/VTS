@@ -10,9 +10,9 @@ using Vts.MonteCarlo.Tissues;
 namespace Vts.MonteCarlo
 {
     /// <summary>
-    /// Implements various commonly used SimulationInput classes for various tissue types.
+    /// Helper class to build typical and custom instances of SimulationInput
     /// </summary>
-    public class SimulationInputProvider : SimulationInput
+    public static class SimulationInputProvider
     {
         /// <summary>
         /// Method that provides instances of all inputs in this class.
@@ -41,6 +41,35 @@ namespace Vts.MonteCarlo
                 FluorescenceEmissionAOfXAndYAndZSourceInfiniteCylinder()
             };
         }
+
+        #region Fluent SimulationInput builder extensions
+
+        //private static void DemoInputGeneration()
+        //{
+        //    var input = new SimulationInput("demoInput")
+        //        .WithSourceInput(SourceInputProvider.DirectionalPointSourceInput())
+        //        .WithTissueInput(TissueInput);
+        //}
+
+        public static SimulationInput WithSourceInput(this SimulationInput simulationInput, ISourceInput sourceInput)
+        {
+            simulationInput.SourceInput = sourceInput;
+            return simulationInput;
+        }
+
+        public static SimulationInput WithTissueInput(this SimulationInput simulationInput, ITissueInput tissueInput)
+        {
+            simulationInput.TissueInput = tissueInput;
+            return simulationInput;
+        }
+
+        public static SimulationInput WithDetectorInputs(this SimulationInput simulationInput, params IDetectorInput[] detectorInputs)
+        {
+            simulationInput.DetectorInputs = detectorInputs;
+            return simulationInput;
+        }
+
+        #endregion
 
         #region point source one layer tissue all detectors
         /// <summary>
@@ -78,7 +107,7 @@ namespace Vts.MonteCarlo
                             new OpticalProperties(0.0, 1e-10, 1.0, 1.0))
                     }
                 ),
-                detectorInputs: DetectorInputProvider.GenerateAllDetectorInputs()
+                detectorInputs: DetectorInputProvider.GetAllDetectorInputs()
             );
         }
         #endregion
