@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup Condition="'$(VisualStudioVersion)'&gt;='16.0' or '$(VisualStudioVersion)'==''">
-    <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(VisualStudioVersion)'&lt;'16.0'">

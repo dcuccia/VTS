@@ -2,7 +2,7 @@
 
   <PropertyGroup Condition="'$(VisualStudioVersion)'&gt;='16.0' or '$(VisualStudioVersion)'==''">
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
     <AssemblyName>mgrte</AssemblyName>
   </PropertyGroup>
 
