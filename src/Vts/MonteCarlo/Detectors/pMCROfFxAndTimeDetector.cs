@@ -23,6 +23,15 @@ namespace Vts.MonteCarlo.Detectors
             TallyType = "pMCROfFxAndTime";
             Name = "pMCROfFxAndTime";
             Fx = new DoubleRange(0.0, 10, 101);
+            Time = new DoubleRange(0.0, 10.0, 101);
+
+            PerturbedOps = new List<OpticalProperties>()
+            {
+                new OpticalProperties(),
+                new OpticalProperties(),
+                new OpticalProperties(),
+            };
+            PerturbedRegionsIndices = new List<int>() { 1 };
 
             // modify base class TallyDetails to take advantage of built-in validation capabilities (error-checking)
             TallyDetails.IspMCReflectanceTally = true;

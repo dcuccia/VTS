@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Vts.Common;
 using Vts.MonteCarlo.Detectors;
 using Vts.MonteCarlo.Helpers;
@@ -107,10 +108,10 @@ namespace Vts.MonteCarlo
                             new OpticalProperties(0.0, 1e-10, 1.0, 1.0))
                     }
                 ),
-                detectorInputs: DetectorInputProvider.GetAllDetectorInputs()
+                detectorInputs: DetectorInputProvider.GetAllDetectorInputs().Where(di => !di.TallyDetails.IsNotImplementedForDAW).ToArray()
             );
         }
-        #endregion
+        #endregion.
 
         #region point source one layer R(rho) and Fluence(rho) (for lab exercises)
         /// <summary>

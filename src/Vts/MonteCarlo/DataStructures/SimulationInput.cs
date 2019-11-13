@@ -64,12 +64,7 @@ namespace Vts.MonteCarlo
             Options = simulationOptions;
             SourceInput = sourceInput;
             TissueInput = tissueInput;
-            DetectorInputs = detectorInputs;       
-            // check if detectorInputs list is null and if so make empty
-            if (DetectorInputs == null)
-            {
-                DetectorInputs = new List<IDetectorInput>() {};
-            }
+            DetectorInputs = detectorInputs ?? new List<IDetectorInput>();
         }
 
         /// <summary>
@@ -112,14 +107,8 @@ namespace Vts.MonteCarlo
                             new DoubleRange(100.0, double.PositiveInfinity),
                             new OpticalProperties(0.0, 1e-10, 1.0, 1.0))
                     }),
-
-                new List<IDetectorInput>
-                {
-                    new ROfRhoDetectorInput
-                    {
-                        Rho = new DoubleRange(0.0, 40.0, 201)
-                    }, // rho: nr=200 dr=0.2mm used for workshop)
-                }
+                    new IDetectorInput[] { new ROfRhoDetectorInput { Rho = new DoubleRange(0.0, 40.0, 201) } } // rho: nr=200 dr=0.2mm used for workshop)
+                    
                 ) { }
 
         /// <summary>

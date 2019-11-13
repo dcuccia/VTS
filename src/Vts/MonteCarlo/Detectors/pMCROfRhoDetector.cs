@@ -23,6 +23,14 @@ namespace Vts.MonteCarlo.Detectors
             Name = "pMCROfRho";
             Rho = new DoubleRange(0.0, 10, 101);
 
+            PerturbedOps = new List<OpticalProperties>()
+            {
+                new OpticalProperties(),
+                new OpticalProperties(),
+                new OpticalProperties(),
+            };
+            PerturbedRegionsIndices = new List<int>() { 1 };
+
             // modify base class TallyDetails to take advantage of built-in validation capabilities (error-checking)
             TallyDetails.IsCylindricalTally = true;
             TallyDetails.IspMCReflectanceTally = true;
@@ -65,8 +73,7 @@ namespace Vts.MonteCarlo.Detectors
     {
         private IList<OpticalProperties> _referenceOps;
         private IList<OpticalProperties> _perturbedOps;
-        private IList<int> _perturbedRegionsIndices;
-        private double _rhoDelta; // need to kep this because DoubleRange adjust deltas automatically       
+        private IList<int> _perturbedRegionsIndices;     
         private Func<IList<long>, IList<double>, IList<OpticalProperties>, IList<OpticalProperties>, IList<int>, double> _absorbAction;
  
         /* ==== Place optional/user-defined input properties here. They will be saved in text (JSON) format ==== */

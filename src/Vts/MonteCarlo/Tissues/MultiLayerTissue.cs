@@ -184,7 +184,7 @@ namespace Vts.MonteCarlo.Tissues
         /// </summary>
         /// <param name="position"></param>
         /// <returns></returns>
-        public PhotonStateType GetPhotonDataPointStateOnExit(Position position)
+        public virtual PhotonStateType GetPhotonDataPointStateOnExit(Position position)
         {
             if (position.Z < 1e-10)
             {
@@ -240,7 +240,7 @@ namespace Vts.MonteCarlo.Tissues
         /// </summary>
         /// <param name="photon"></param>
         /// <returns>Uz=cos(theta)</returns>
-        public double GetAngleRelativeToBoundaryNormal(Photon photon)
+        public virtual double GetAngleRelativeToBoundaryNormal(Photon photon)
         {
             return Math.Abs(photon.DP.Direction.Uz); // abs will work for upward normal and downward normal
         }

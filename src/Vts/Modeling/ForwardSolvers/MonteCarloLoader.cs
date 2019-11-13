@@ -121,7 +121,6 @@ namespace Vts.Modeling.ForwardSolvers
             RReferenceOfFxAndTime = new double[nfxReference, ntReference];
             for (int ifx = 0; ifx < nfxReference; ifx++)
             {
-                double sum = 0.0;
                 for (int it = 0; it < ntReference; it++) // this only goes to 800 not 801 because ntReference determined from ROfRhoAndTime.txt
                 {
                     RReferenceOfFxAndTime[ifx, it] = rOfFxAndTime.Mean[ifx, it].Real;

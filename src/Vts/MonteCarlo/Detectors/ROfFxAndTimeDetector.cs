@@ -22,6 +22,7 @@ namespace Vts.MonteCarlo.Detectors
             TallyType = "ROfFxAndTime";
             Name = "ROfFxAndTime";
             Fx = new DoubleRange(0.0, 0.5, 51);
+            Time = new DoubleRange( 0.0, 10.0, 101);
 
             // modify base class TallyDetails to take advantage of built-in validation capabilities (error-checking)
             TallyDetails.IsReflectanceTally = true;

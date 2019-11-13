@@ -2,17 +2,16 @@
 
   <PropertyGroup Condition="'$(VisualStudioVersion)'&gt;='16.0' or '$(VisualStudioVersion)'==''">
     <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(VisualStudioVersion)'&lt;'16.0'">
     <TargetFramework>net48</TargetFramework>
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors />
+    <NoWarn>NU1605</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

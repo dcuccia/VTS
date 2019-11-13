@@ -52,6 +52,7 @@ namespace Vts.MonteCarlo.CommandLineApplication.Test
         [OneTimeSetUp]
         public void setup()
         {
+            Environment.SetEnvironmentVariable("TEST", "TRUE", EnvironmentVariableTarget.Process);
             clear_folders_and_files();
             // generate sample infiles because unit tests below rely on infiles being generated
             string[] arguments = new string[] {"geninfiles"};

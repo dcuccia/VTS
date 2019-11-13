@@ -94,6 +94,24 @@ namespace Vts.Common
             }
             return false;
         }
+
+        /// <summary>
+        /// Default hashcode implmentation, see https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-overriding-gethashcode
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 17;
+                // Suitable nullity checks etc, of course :)
+                hash = hash * 23 + Ux.GetHashCode();
+                hash = hash * 23 + Uy.GetHashCode();
+                hash = hash * 23 + Uz.GetHashCode();
+                return hash;
+            }
+        }
+
         /// <summary>
         /// Method to determine dot product between two unit directionals.
         /// </summary>

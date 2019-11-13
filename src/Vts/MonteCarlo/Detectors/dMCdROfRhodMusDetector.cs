@@ -22,6 +22,13 @@ namespace Vts.MonteCarlo.Detectors
             TallyType = "dMCdROfRhodMus";
             Name = "dMCdROfRhodMus";
             Rho = new DoubleRange(0.0, 10, 101);
+            PerturbedOps = new List<OpticalProperties>()
+            {
+                new OpticalProperties(),
+                new OpticalProperties(),
+                new OpticalProperties(),
+            };
+            PerturbedRegionsIndices = new List<int>() { 1 };
 
             // modify base class TallyDetails to take advantage of built-in validation capabilities (error-checking)
             TallyDetails.IsCylindricalTally = true;
@@ -66,7 +73,6 @@ namespace Vts.MonteCarlo.Detectors
         private IList<OpticalProperties> _referenceOps;
         private IList<OpticalProperties> _perturbedOps;
         private IList<int> _perturbedRegionsIndices;
-        private double _rhoDelta; // need to kep this because DoubleRange adjust deltas automatically
         private Func<IList<long>, IList<double>, IList<OpticalProperties>, double> _absorbAction;
         private AbsorptionWeightingType _awt;
 

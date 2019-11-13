@@ -25,6 +25,7 @@ namespace Vts.MonteCarlo.Detectors
             Name = "ReflectedMTOfRhoAndSubregionHist";
             Rho = new DoubleRange(0.0, 10, 101);
             MTBins = new DoubleRange(0.0, 500.0, 51);
+            FractionalMTBins = new DoubleRange(0.0, 1.0, 11);
 
             // modify base class TallyDetails to take advantage of built-in validation capabilities (error-checking)
             TallyDetails.IsReflectanceTally = true;

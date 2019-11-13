@@ -190,7 +190,11 @@ namespace Vts.MonteCarlo.CommandLineApplication
                             Console.Write("\nValidation rule:" + validationResult.ValidationRule);
                             Console.Write("\nRemarks:" + validationResult.Remarks);
                             Console.Write("\nPress enter key to exit.");
-                            Console.Read();
+
+                            if (Environment.GetEnvironmentVariable("TEST") == null) // skip this if we're in a unit-test framework, so we can fail w/o waiting for user input
+                            {
+                                Console.Read();
+                            }
                             return false;
                         }
                         return true;

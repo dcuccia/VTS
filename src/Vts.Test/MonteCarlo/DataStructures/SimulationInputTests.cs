@@ -81,7 +81,10 @@ namespace Vts.Test.MonteCarlo
                 TissueInputProvider.MultiLayerTissueInput(),
                 new[] { DetectorInputProvider.RDiffuseDetectorInput() }
             );
-            Assert.IsTrue(si.DetectorInputs.Count == 0);
+            Assert.NotNull(si.SourceInput);
+            Assert.NotNull(si.TissueInput);
+            Assert.NotNull(si.DetectorInputs);
+            Assert.IsTrue(si.DetectorInputs.Count == 1);
         }
     }
 }

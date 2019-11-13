@@ -76,16 +76,27 @@
             if (obj is PolarAzimuthalAngles)
             {
                 var pa = obj as PolarAzimuthalAngles;
-                if (pa == null)
-                    return
-                        Theta == 0.0 &&
-                        Phi == 0.0;
-                else
-                    return
-                        Theta == pa.Theta &&
-                        Phi == pa.Phi;
+                return
+                    Theta == pa.Theta &&
+                    Phi == pa.Phi;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Default hashcode implmentation, see https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-overriding-gethashcode
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 17;
+                // Suitable nullity checks etc, of course :)
+                hash = hash * 23 + Theta.GetHashCode();
+                hash = hash * 23 + Phi.GetHashCode();
+                return hash;
+            }
         }
 
         public PolarAzimuthalAngles Clone()

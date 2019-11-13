@@ -22,6 +22,7 @@ namespace Vts.MonteCarlo.Detectors
             TallyType = "ROfFxAndAngle";
             Name = "ROfFxAndAngle";
             Fx = new DoubleRange(0.0, 0.5, 51);
+            Angle = new DoubleRange(Math.PI / 2, Math.PI, 5);
 
             // modify base class TallyDetails to take advantage of built-in validation capabilities (error-checking)
             TallyDetails.IsReflectanceTally = true;

@@ -28,7 +28,9 @@ namespace Vts.MonteCarlo.Detectors
             X = new DoubleRange(-10.0, 10.0, 101);
             Y = new DoubleRange(-10.0, 10.0, 101);
             Z = new DoubleRange(0.0, 10.0, 51);
+            BloodVolumeFraction = new List<double>() { 0, 0.5, 0.5, 0 };
             MTBins = new DoubleRange(0.0, 500.0, 51);
+            FractionalMTBins = new DoubleRange(0.0, 1.0, 11);  
 
             // modify base class TallyDetails to take advantage of built-in validation capabilities (error-checking)
             TallyDetails.IsReflectanceTally = true;

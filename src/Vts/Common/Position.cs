@@ -150,18 +150,29 @@ namespace Vts.Common
             if (obj is Position)
             {
                 var p = obj as Position;
-                if (p == null)
-                    return
-                        X == 0.0 &&
-                        Y == 0.0 &&
-                        Z == 0.0;
-                else
-                    return
-                        X == p.X &&
-                        Y == p.Y &&
-                        Z == p.Z;
+                return
+                    X == p.X &&
+                    Y == p.Y &&
+                    Z == p.Z;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Default hashcode implmentation, see https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-overriding-gethashcode
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 17;
+                // Suitable nullity checks etc, of course :)
+                hash = hash * 23 + X.GetHashCode();
+                hash = hash * 23 + Y.GetHashCode();
+                hash = hash * 23 + Z.GetHashCode();
+                return hash;
+            }
         }
 
         /// <summary>
