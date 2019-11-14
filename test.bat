@@ -1,1 +1,1 @@
-dotnet test src\\Vts.sln
+dotnet test "src\Vts.sln"

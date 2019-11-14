@@ -1,1 +1,1 @@
-dotnet build src\\Vts.sln
+dotnet build "src\Vts.sln"
