@@ -27,7 +27,7 @@ namespace Vts.Test.MonteCarlo
         {
             foreach (var file in listOfTestGeneratedFiles)
             {
-                FileIO.FileDelete(file);   
+                FileIO.FileDelete(file);
             }
         }
 
@@ -40,8 +40,8 @@ namespace Vts.Test.MonteCarlo
             var si1 = new SimulationInput { N = 30 };
             var si2 = new SimulationInput { N = 20 };
             var sim1 = new MonteCarloSimulation(si1);
-            var sim2= new MonteCarloSimulation(si2);
-            var sims = new[] {sim1, sim2};
+            var sim2 = new MonteCarloSimulation(si2);
+            var sims = new[] { sim1, sim2 };
 
             var outputs = MonteCarloSimulation.RunAll(sims);
 
@@ -49,6 +49,29 @@ namespace Vts.Test.MonteCarlo
             Assert.NotNull(outputs[1]);
             Assert.True(outputs[0].Input.N == 30);
             Assert.True(outputs[1].Input.N == 20);
+        }
+
+        /// <summary>
+        /// Validate fluent-constructed SimulationInput runs simulation without crashing
+        /// </summary>
+        [Test]
+        public void validate_fluent_constructed_SimulationInput_runs_simulation_without_crashing()
+        {
+            var si = new SimulationInput("demoInput") { N = 30 }
+                .WithSourceInput(SourceInputProvider.DirectionalPointSourceInput())
+                .WithTissueInput(TissueInputProvider.MultiLayerTissueInput())
+                .WithDetectorInputs(DetectorInputProvider.RDiffuseDetectorInput());
+
+            Assert.NotNull(si.SourceInput);
+            Assert.NotNull(si.TissueInput);
+            Assert.NotNull(si.DetectorInputs);
+            Assert.IsTrue(si.DetectorInputs.Count == 1);
+
+            var mc = new MonteCarloSimulation(si);
+            var output = mc.Run();
+
+            Assert.NotNull(output);
+            Assert.True(output.Input.N == 30);
         }
     }
 }

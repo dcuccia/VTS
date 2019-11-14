@@ -45,13 +45,6 @@ namespace Vts.MonteCarlo
 
         #region Fluent SimulationInput builder extensions
 
-        //private static void DemoInputGeneration()
-        //{
-        //    var input = new SimulationInput("demoInput")
-        //        .WithSourceInput(SourceInputProvider.DirectionalPointSourceInput())
-        //        .WithTissueInput(TissueInput);
-        //}
-
         public static SimulationInput WithSourceInput(this SimulationInput simulationInput, ISourceInput sourceInput)
         {
             simulationInput.SourceInput = sourceInput;
