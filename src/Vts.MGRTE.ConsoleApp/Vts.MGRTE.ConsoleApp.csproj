@@ -1,12 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Condition="'$(VisualStudioVersion)'&gt;='16.0' or '$(VisualStudioVersion)'==''">
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' AND ( '$(VisualStudioVersion)'&gt;='16.0' OR '$(VisualStudioVersion)'=='' ) ">
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
+    <AssemblyName>mgrte</AssemblyName>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' AND ( '$(VisualStudioVersion)'&gt;='16.0' OR '$(VisualStudioVersion)'=='' )">
     <OutputType>Exe</OutputType>
     <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
     <AssemblyName>mgrte</AssemblyName>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(VisualStudioVersion)'&lt;'16.0'">
+  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' AND '$(VisualStudioVersion)'&lt;'16.0'">
     <OutputType>Exe</OutputType>
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>mgrte</AssemblyName>
