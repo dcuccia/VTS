@@ -10,22 +10,25 @@ namespace Vts.MonteCarlo
     /// </summary>
     public class SourceInputProvider
     {
-        private static readonly IServiceProvider ServiceProvider;
-
-        static SourceInputProvider()
+        private static IServiceProvider _serviceProvider;
+        private static IServiceProvider ServiceProvider
         {
-            var collection = new ServiceCollection()
-                .Scan(scan =>
-                    scan.FromApplicationDependencies()
-                        //.AddClasses(classes => classes.AssignableTo<ISourceInput>())
-                        //    .AsImplementedInterfaces()
-                        //    .WithTransientLifetime()
-                    .AddClasses(classes => classes.AssignableTo<ISourceInput>())
-                        .AsSelfWithInterfaces()
-                        .WithTransientLifetime()
-                    );
+            get
+            {
+                if (_serviceProvider == null)
+                {
+                    var collection = new ServiceCollection()
+                        .Scan(scan =>
+                            scan.FromApplicationDependencies()
+                                .AddClasses(classes => classes.AssignableTo<ISourceInput>())
+                                .AsSelfWithInterfaces()
+                                .WithTransientLifetime()
+                        );
+                    _serviceProvider = collection.BuildServiceProvider();
+                }
 
-            ServiceProvider = collection.BuildServiceProvider();
+                return _serviceProvider;
+            }
         }
 
         /// <summary>
