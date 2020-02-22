@@ -43,7 +43,7 @@ namespace Vts.MonteCarlo.PostProcessor.Test
         /// <summary>
         /// clear all previously generated folders and files, then regenerate sample infiles using "geninfiles" option.
         /// </summary>
-        [OneTimeSetUp]
+        [SetUp]
         public async Task setup()
         {
             clear_folders_and_files();
@@ -60,7 +60,7 @@ namespace Vts.MonteCarlo.PostProcessor.Test
             await Task.Run(() => CommandLineApplication.Program.Main(arguments));
         }
 
-        [OneTimeTearDown]
+        [TearDown]
         public void clear_folders_and_files()
         {
             // delete any previously generated infiles to test that "geninfiles" option creates them
