@@ -69,7 +69,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Vts\Vts.csproj" />
+    <ProjectReference Include="..\Vts.Common\Vts.Common.csproj" />
+    <ProjectReference Include="..\Vts.IO\Vts.IO.csproj" />
+    <ProjectReference Include="..\Vts.MonteCarlo\Vts.MonteCarlo.csproj" />
+    <ProjectReference Include="..\Vts\Vts.Modeling.csproj" />
   </ItemGroup>
 
   <ItemGroup>

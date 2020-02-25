@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using System.Reflection;
 using MathNet.Numerics;
 using Vts.IO;
 
@@ -25,13 +26,14 @@ namespace Vts.Modeling.ForwardSolvers
 
         static DistributedGaussianSourceSDAForwardSolver()
         {
+            var name = Assembly.GetExecutingAssembly().FullName;
+            var assemblyName = new AssemblyName(name).Name;
             //read input stuff
-            string projectName = "Vts";
             string dataLocation = "Modeling/Resources/HankelData/";
             hankelPoints = (double[])FileIO.ReadArrayFromBinaryInResources<double>
-               (dataLocation + @"basepoints.dat", projectName, dataLength);
+               (dataLocation + @"basepoints.dat", assemblyName, dataLength);
             hankelWeights = (double[])FileIO.ReadArrayFromBinaryInResources<double>
-                (dataLocation + @"hankelweights.dat", projectName, dataLength);
+                (dataLocation + @"hankelweights.dat", assemblyName, dataLength);
         }
 
         /// <summary>

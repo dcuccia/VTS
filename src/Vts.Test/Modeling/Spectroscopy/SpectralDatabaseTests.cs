@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using NUnit.Framework;
 using Vts.IO;
 using Vts.SpectralMapping;
@@ -32,12 +33,16 @@ namespace Vts.Test.Modeling.Spectroscopy
             "absorber-Nigrosin.txt"
         };
 
+        private string _assemblyName;
+
         /// <summary>
         /// Runs before every unit test after the OneTimeSetUp
         /// </summary>
         [SetUp]
         public void setup()
         {
+            var name = Assembly.GetAssembly(typeof(SpectralDatabase)).FullName;
+            _assemblyName = new AssemblyName(name).Name;
         }
 
         /// <summary>
@@ -104,7 +109,7 @@ namespace Vts.Test.Modeling.Spectroscopy
         [Test]
         public void validate_loading_spectral_database_from_tsv_in_resources()
         {
-            Stream stream = StreamFinder.GetFileStreamFromResources("Modeling/Spectroscopy/Resources/Spectra.txt", "Vts");
+            Stream stream = StreamFinder.GetFileStreamFromResources("Modeling/Spectroscopy/Resources/Spectra.txt", _assemblyName);
 
             List<ChromophoreSpectrum> myChromophoreList = new List<ChromophoreSpectrum>();
             //create 2 sets of values for the tab delimeted file
@@ -132,7 +137,7 @@ namespace Vts.Test.Modeling.Spectroscopy
         [Test]
         public void validate_Loading_Spectral_Database_and_header_from_tsv_in_resources()
         {
-            Stream stream = StreamFinder.GetFileStreamFromResources("Modeling/Spectroscopy/Resources/Spectra.txt", "Vts");
+            Stream stream = StreamFinder.GetFileStreamFromResources("Modeling/Spectroscopy/Resources/Spectra.txt", _assemblyName);
 
             var testSpectra = SpectralDatabase.GetSpectraFromFile(stream, true);
             var testDictionary = testSpectra.ToDictionary();
@@ -150,10 +155,10 @@ namespace Vts.Test.Modeling.Spectroscopy
             string line;
             string[] row;
 
-            Stream stream = StreamFinder.GetFileStreamFromResources("Modeling/Spectroscopy/Resources/Spectra.txt", "Vts");
+            Stream stream = StreamFinder.GetFileStreamFromResources("Modeling/Spectroscopy/Resources/Spectra.txt", _assemblyName);
             var testSpectra = SpectralDatabase.GetSpectraFromFile(stream, true);
             var testDictionary = testSpectra.ToDictionary();
-            stream = StreamFinder.GetFileStreamFromResources("Modeling/Spectroscopy/Resources/Spectra.txt", "Vts");
+            stream = StreamFinder.GetFileStreamFromResources("Modeling/Spectroscopy/Resources/Spectra.txt", _assemblyName);
             using (StreamReader readFile = new StreamReader(stream))
             {
                 // read n lines (there is one line of header so
@@ -183,7 +188,7 @@ namespace Vts.Test.Modeling.Spectroscopy
         [Test]
         public void validate_loading_spectral_database_and_header_from_tsv_no_conversion()
         {
-            Stream stream = StreamFinder.GetFileStreamFromResources("Modeling/Spectroscopy/Resources/Spectra.txt", "Vts");
+            Stream stream = StreamFinder.GetFileStreamFromResources("Modeling/Spectroscopy/Resources/Spectra.txt", _assemblyName);
 
             var testSpectra = SpectralDatabase.GetSpectraFromFile(stream, false);
             var testDictionary = testSpectra.ToDictionary();

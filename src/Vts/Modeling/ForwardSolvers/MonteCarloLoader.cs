@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Vts.Common;
-using Vts.IO;
-using Vts.MonteCarlo;
-using Vts.MonteCarlo.Detectors;
 using Vts.MonteCarlo.IO;
-
-//using MathNet.Numerics.Interpolation;
 
 namespace Vts.Modeling.ForwardSolvers
 {
@@ -70,11 +66,20 @@ namespace Vts.Modeling.ForwardSolvers
         /// can't point to N1e7 until writing to isolated storage working for R_fxt code below
         private string folder = "ReferenceData/N1e8mua0musp1g0p8dr0p2dt0p005/";
 
+        private static readonly string _assemblyName;
+        
+        static MonteCarloLoader()
+        {
+            var name = Assembly.GetExecutingAssembly().FullName;
+            _assemblyName = new AssemblyName(name).Name;
+        }
+
         /// <summary>
         /// constructor that loads scaled Monte Carlo reference data and database 
         /// </summary>
         public MonteCarloLoader()
         {
+            VtsMonteCarloJsonSerializer.PreInitialize();
             //nfxReference = 100;
             //dfxReference = 1.0 / nfxReference; 
             InitializeVectorsAndInterpolators();
@@ -87,7 +92,7 @@ namespace Vts.Modeling.ForwardSolvers
         private void InitializeVectorsAndInterpolators()
         {
             // load R(rho,time) reference data
-            var rOfRhoAndTime = (dynamic)DetectorIO.ReadDetectorFromFileInResources("ROfRhoAndTime", "Modeling/Resources/" + folder, "Vts");
+            var rOfRhoAndTime = (dynamic)DetectorIO.ReadDetectorFromFileInResources("ROfRhoAndTime", "Modeling/Resources/" + folder, _assemblyName);
 
             nrReference = rOfRhoAndTime.Rho.Count - 1;
             drReference = rOfRhoAndTime.Rho.Delta;
@@ -111,7 +116,7 @@ namespace Vts.Modeling.ForwardSolvers
             }
 
             // load R(fx,time) reference data
-            var rOfFxAndTime = (dynamic)DetectorIO.ReadDetectorFromFileInResources("ROfFxAndTime", "Modeling/Resources/" + folder, "Vts");
+            var rOfFxAndTime = (dynamic)DetectorIO.ReadDetectorFromFileInResources("ROfFxAndTime", "Modeling/Resources/" + folder, _assemblyName);
 
             nfxReference = rOfFxAndTime.Fx.Count;
             dfxReference = 1.0/nfxReference;
@@ -130,7 +135,7 @@ namespace Vts.Modeling.ForwardSolvers
             //if (true)
             //{
             //    RReferenceOfFxAndTime = (double[,])FileIO.ReadArrayFromBinaryInResources<double>("Modeling/Resources/" +
-            //        folder + @"R_fxt", "Vts");
+            //        folder + @"R_fxt", _assemblyName);
             //}
             //else
             //{

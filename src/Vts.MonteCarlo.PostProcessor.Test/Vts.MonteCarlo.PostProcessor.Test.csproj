@@ -44,7 +44,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Vts.MonteCarlo.CommandLineApplication\Vts.MonteCarlo.CommandLineApplication.csproj" />
     <ProjectReference Include="..\Vts.MonteCarlo.PostProcessor\Vts.MonteCarlo.PostProcessor.csproj" />
-    <ProjectReference Include="..\Vts\Vts.csproj" />
+    <ProjectReference Include="..\Vts\Vts.Modeling.csproj" />
   </ItemGroup>
 
 </Project>

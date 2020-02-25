@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Vts.IO;
 
 namespace Vts.Modeling
@@ -26,13 +27,14 @@ namespace Vts.Modeling
 
         static HankelTransform()
         {
-            //read input quadrature data
-            string projectName = "Vts";
+            var name = Assembly.GetExecutingAssembly().FullName;
+            var assemblyName = new AssemblyName(name).Name;
             string dataLocation = "Modeling/Resources/HankelData/";
+            //read input quadrature data
             hankelPoints = (double[])FileIO.ReadArrayFromBinaryInResources<double>
-               (dataLocation + @"basepoints.dat", projectName, dataLength);
+               (dataLocation + @"basepoints.dat", assemblyName, dataLength);
             hankelWeights = (double[])FileIO.ReadArrayFromBinaryInResources<double>
-                (dataLocation + @"hankelweights.dat", projectName, dataLength);
+                (dataLocation + @"hankelweights.dat", assemblyName, dataLength);
         }
 
         public static double DigitalFilterOfOrderZero(double varInt, Func<double, double> func)

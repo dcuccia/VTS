@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using Vts.IO;
 
@@ -11,6 +12,13 @@ namespace Vts.SpectralMapping
     /// </summary>
     public static class SpectralDatabase
     {
+        private static readonly string _assemblyName;
+        static SpectralDatabase()
+        {
+            var name = Assembly.GetExecutingAssembly().FullName;
+            _assemblyName = new AssemblyName(name).Name;
+        }
+
         /// <summary>
         /// Private property to store the loaded database
         /// </summary>
@@ -49,7 +57,7 @@ namespace Vts.SpectralMapping
         /// <returns>Dictionary of Chromophore spectra</returns>
         public static ChromophoreSpectrumDictionary GetDefaultDatabaseFromFileInResources()
         {
-            return FileIO.ReadFromJsonInResources<ChromophoreSpectrumDictionary>("Modeling/Spectroscopy/Resources/SpectralDictionary.txt", "Vts");
+            return FileIO.ReadFromJsonInResources<ChromophoreSpectrumDictionary>("Modeling/Spectroscopy/Resources/SpectralDictionary.txt", _assemblyName);
         }
 
         /// <summary>

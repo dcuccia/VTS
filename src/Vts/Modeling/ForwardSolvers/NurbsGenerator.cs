@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using MathNet.Numerics;
+using System.Reflection;
 using Vts.IO;
 
 namespace Vts.Modeling.ForwardSolvers
@@ -75,12 +75,19 @@ namespace Vts.Modeling.ForwardSolvers
 
         #region fields
 
+        private static readonly string _assemblyName;
+        static NurbsGenerator()
+        {
+            var name = Assembly.GetExecutingAssembly().FullName;
+            _assemblyName = new AssemblyName(name).Name;
+        }
+
         private double _minExponentialTerm;
 
         private static string _folderPath = "Modeling/Resources/ReferenceNurbs/";
         
         private static string _folder = "/v0p1";
-        
+
         #endregion fields
 
         #region constructor
@@ -91,18 +98,20 @@ namespace Vts.Modeling.ForwardSolvers
         /// </summary>
         /// <param name="generatorType">NURBS surface physical domain</param>
         public NurbsGenerator(NurbsGeneratorType generatorType)
+            : this()
         {
+
             GeneratorType = generatorType;
             // Load binary files based on generator type
-            TimeValues = (NurbsValues)FileIO.ReadFromJsonInResources<NurbsValues>(_folderPath + generatorType.ToString() + _folder + @"/timeNurbsValues.txt", "Vts");
-            SpaceValues = (NurbsValues)FileIO.ReadFromJsonInResources<NurbsValues>(_folderPath + generatorType.ToString() + _folder + @"/spaceNurbsValues.txt", "Vts");
+            TimeValues = (NurbsValues)FileIO.ReadFromJsonInResources<NurbsValues>(_folderPath + generatorType.ToString() + _folder + @"/timeNurbsValues.txt", _assemblyName);
+            SpaceValues = (NurbsValues)FileIO.ReadFromJsonInResources<NurbsValues>(_folderPath + generatorType.ToString() + _folder + @"/spaceNurbsValues.txt", _assemblyName);
             // Get the dimensions of the control point matrix
             int[] dims = { SpaceValues.KnotVector.Length - SpaceValues.Degree - 1, TimeValues.KnotVector.Length - TimeValues.Degree - 1 };
             // Load control points
             ControlPoints = (double[,])FileIO.ReadArrayFromBinaryInResources<double>
-                             (_folderPath + generatorType.ToString() + _folder + @"/controlPoints", "Vts", dims);
+                             (_folderPath + generatorType.ToString() + _folder + @"/controlPoints", _assemblyName, dims);
             NativeTimes = (double[])FileIO.ReadArrayFromBinaryInResources<double>
-                             (_folderPath + generatorType.ToString() + _folder + @"/nativeTimes", "Vts", dims[1]);
+                             (_folderPath + generatorType.ToString() + _folder + @"/nativeTimes", _assemblyName, dims[1]);
             //calculate polynomial coefficients of the basis functions along the time direction.
             TimeKnotSpanPolynomialCoefficients = new List<BSplinesCoefficients>();
             for (int knotindex = TimeValues.Degree; knotindex <= TimeValues.KnotVector.Length - 2 - TimeValues.Degree; knotindex++)
@@ -113,9 +122,9 @@ namespace Vts.Modeling.ForwardSolvers
             {
                 _minExponentialTerm = 0.001 * NurbsForwardSolver.v;
                 MinValidTimes = (double[])FileIO.ReadArrayFromBinaryInResources<double>
-                             (_folderPath + generatorType.ToString() + _folder + @"/minValidTimes", "Vts", dims[0]);
+                             (_folderPath + generatorType.ToString() + _folder + @"/minValidTimes", _assemblyName, dims[0]);
                 Rhos = (double[])FileIO.ReadArrayFromBinaryInResources<double>
-                             (_folderPath + generatorType.ToString() + _folder + @"/rhos", "Vts", dims[0]);
+                             (_folderPath + generatorType.ToString() + _folder + @"/rhos", _assemblyName, dims[0]);
             }
         }
 

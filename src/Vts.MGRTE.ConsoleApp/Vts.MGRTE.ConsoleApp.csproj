@@ -48,6 +48,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Vts\Vts.csproj" />
+    <ProjectReference Include="..\Vts\Vts.Modeling.csproj" />
   </ItemGroup>
 </Project>

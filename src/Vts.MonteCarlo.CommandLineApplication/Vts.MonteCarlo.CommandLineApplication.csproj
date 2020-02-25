@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Vts\Vts.csproj" />
+    <ProjectReference Include="..\Vts.MonteCarlo\Vts.MonteCarlo.csproj" />
   </ItemGroup>
 
   <ItemGroup>

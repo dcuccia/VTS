@@ -29,6 +29,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Vts\Vts.Modeling.csproj" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48'">
     <DefineConstants>NET48;NETFULL</DefineConstants>
   </PropertyGroup>
@@ -38,8 +41,4 @@
     <WarningsAsErrors />
     <NoWarn>NU1605</NoWarn>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Vts\Vts.csproj" />
-  </ItemGroup>
 </Project>

@@ -275,34 +275,34 @@ namespace Vts.Test.IO
             stream.Close();
         }
 
-        [Test]
-        public void validate_read_from_stream()
-        {
-            var name = Assembly.GetExecutingAssembly().FullName;
-            var assemblyName = new AssemblyName(name).Name;
-            Position pos;
-            // read file from resources and write it so that can be read in
-            var xml = FileIO.ReadFromXMLInResources<Position>("Resources/fileiotest/file7.xml", assemblyName);
-            FileIO.WriteToXML<Position>(xml, "file7.xml");
-            using (Stream stream = StreamFinder.GetFileStream("file7.xml", FileMode.Open))
-            {
-                pos = FileIO.ReadFromStream<Position>(stream);
-            }
-            Assert.AreEqual(pos.X, 2);
-            Assert.AreEqual(pos.Y, 4);
-            Assert.AreEqual(pos.Z, 6);
-        }
+        //[Test]
+        //public void validate_read_from_stream()
+        //{
+        //    var name = Assembly.GetExecutingAssembly().FullName;
+        //    var assemblyName = new AssemblyName(name).Name;
+        //    Position pos;
+        //    // read file from resources and write it so that can be read in
+        //    var xml = FileIO.ReadFromXMLInResources<Position>("Resources/fileiotest/file7.xml", assemblyName);
+        //    FileIO.WriteToXML<Position>(xml, "file7.xml");
+        //    using (Stream stream = StreamFinder.GetFileStream("file7.xml", FileMode.Open))
+        //    {
+        //        pos = FileIO.ReadFromStream<Position>(stream);
+        //    }
+        //    Assert.AreEqual(pos.X, 2);
+        //    Assert.AreEqual(pos.Y, 4);
+        //    Assert.AreEqual(pos.Z, 6);
+        //}
 
-        [Test]
-        public void validate_read_from_xml_in_resources()
-        {
-            var name = Assembly.GetExecutingAssembly().FullName;
-            var assemblyName = new AssemblyName(name).Name;
-            var pos = FileIO.ReadFromXMLInResources<Position>("Resources/fileiotest/file7.xml", assemblyName);
-            Assert.AreEqual(pos.X, 2);
-            Assert.AreEqual(pos.Y, 4);
-            Assert.AreEqual(pos.Z, 6);
-        }
+        //[Test]
+        //public void validate_read_from_xml_in_resources()
+        //{
+        //    var name = Assembly.GetExecutingAssembly().FullName;
+        //    var assemblyName = new AssemblyName(name).Name;
+        //    var pos = FileIO.ReadFromXMLInResources<Position>("Resources/fileiotest/file7.xml", assemblyName);
+        //    Assert.AreEqual(pos.X, 2);
+        //    Assert.AreEqual(pos.Y, 4);
+        //    Assert.AreEqual(pos.Z, 6);
+        //}
 
 
         [Test]
@@ -397,32 +397,32 @@ namespace Vts.Test.IO
             Assert.AreEqual(pos2.Z, 6.0);
         }
 
-        [Test]
-        public void validate_write_to_xml_and_read_from_xml()
-        {
-            var pos = new Position(2, 4, 6);
-            FileIO.WriteToXML<Position>(pos, "file7.xml");
-            Assert.IsTrue(FileIO.FileExists("file7.xml"));
-            Assert.IsTrue(new FileInfo("file7.xml").Length != 0);
-            var pos2 = FileIO.ReadFromXML<Position>("file7.xml");
-            Assert.AreEqual(pos2.X, 2.0);
-            Assert.AreEqual(pos2.Y, 4.0);
-            Assert.AreEqual(pos2.Z, 6.0);
-        }
+        //[Test]
+        //public void validate_write_to_xml_and_read_from_xml()
+        //{
+        //    var pos = new Position(2, 4, 6);
+        //    FileIO.WriteToXML<Position>(pos, "file7.xml");
+        //    Assert.IsTrue(FileIO.FileExists("file7.xml"));
+        //    Assert.IsTrue(new FileInfo("file7.xml").Length != 0);
+        //    var pos2 = FileIO.ReadFromXML<Position>("file7.xml");
+        //    Assert.AreEqual(pos2.X, 2.0);
+        //    Assert.AreEqual(pos2.Y, 4.0);
+        //    Assert.AreEqual(pos2.Z, 6.0);
+        //}
 
-        [Test]
-        public void validate_write_to_xml_stream()
-        {
-            var name = Assembly.GetExecutingAssembly().FullName;
-            var assemblyName = new AssemblyName(name).Name;
-            var xmlFile = FileIO.ReadFromXMLInResources<Position>("Resources/fileiotest/file7.xml", assemblyName);
-            Stream stream = StreamFinder.GetFileStream("file8.xml", FileMode.Create);
-            FileIO.WriteToXMLStream(xmlFile, stream);
-            Assert.IsNotNull(stream);
-            Assert.IsTrue(FileIO.FileExists("file8.xml"));
-            Assert.IsTrue(new FileInfo("file8.xml").Length != 0);
-            stream.Close();
-        }
+        //[Test]
+        //public void validate_write_to_xml_stream()
+        //{
+        //    var name = Assembly.GetExecutingAssembly().FullName;
+        //    var assemblyName = new AssemblyName(name).Name;
+        //    var xmlFile = FileIO.ReadFromXMLInResources<Position>("Resources/fileiotest/file7.xml", assemblyName);
+        //    Stream stream = StreamFinder.GetFileStream("file8.xml", FileMode.Create);
+        //    FileIO.WriteToXMLStream(xmlFile, stream);
+        //    Assert.IsNotNull(stream);
+        //    Assert.IsTrue(FileIO.FileExists("file8.xml"));
+        //    Assert.IsTrue(new FileInfo("file8.xml").Length != 0);
+        //    stream.Close();
+        //}
 
         [Test]
         public void validate_copy_file_from_embedded_resources()
