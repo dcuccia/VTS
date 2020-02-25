@@ -5,6 +5,7 @@ using Vts.Common;
 using Vts.IO;
 using Vts.MonteCarlo.Detectors;
 using Vts.MonteCarlo.Factories;
+using Vts.MonteCarlo.IO;
 using Vts.MonteCarlo.Sources;
 using Vts.MonteCarlo.Tissues;
 
@@ -118,6 +119,7 @@ namespace Vts.MonteCarlo
         /// <returns>SimulationInput</returns>
         public static SimulationInput FromFile(string filename)
         {
+            VtsMonteCarloJsonSerializer.PreInitialize();
             return FileIO.ReadFromJson<SimulationInput>(filename);
         }
 
