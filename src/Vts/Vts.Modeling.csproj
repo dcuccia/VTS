@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' AND ( '$(VisualStudioVersion)'&gt;='16.0' OR '$(VisualStudioVersion)'=='' ) ">
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net48</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Description>The VTS (Virtual Tissue Simulator) is a modular and scalable platform to provide an integrated suite of computational tools to define, solve, visualize, and analyze relevant forward and inverse radiative transport problems in Biomedical Optics.</Description>
     <Company>Virtual Photonics Technology Initiative</Company>
     <Copyright>Copyright © 2019 Laser Microbeam and Medical Program</Copyright>
@@ -158,14 +158,13 @@
     <PackageReference Include="csmpfit" Version="1.1.1" />
     <PackageReference Include="MathNet.Numerics" Version="4.9.0" />
     <PackageReference Include="Meta.Numerics" Version="4.0.7" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0-preview2.19523.17" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0-preview2.19525.4" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="NLog" Version="4.6.8" />
-    <PackageReference Include="Scrutor" Version="3.1.0" />
-    <PackageReference Include="System.Reactive" Version="4.2.0" />
+    <PackageReference Include="System.Reactive" Version="4.3.2" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
-    <PackageReference Include="Unity" Version="5.11.1" />
+    <PackageReference Include="Unity" Version="5.11.4" />
   </ItemGroup>
 
   <ItemGroup>
