@@ -41,8 +41,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vts.MonteCarlo", "Vts.Monte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vts.IO", "Vts.IO\Vts.IO.csproj", "{35933209-AD77-4DFB-9494-13243D5E281F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scrutor", "..\..\external\scrutor\src\Scrutor\Scrutor.csproj", "{2148A2D0-8534-4F74-8352-29CB8121DDF2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -345,30 +343,6 @@ Global
 		{35933209-AD77-4DFB-9494-13243D5E281F}.ReleaseWhiteList|Win32.Build.0 = Release|Any CPU
 		{35933209-AD77-4DFB-9494-13243D5E281F}.ReleaseWhiteList|x86.ActiveCfg = Release|Any CPU
 		{35933209-AD77-4DFB-9494-13243D5E281F}.ReleaseWhiteList|x86.Build.0 = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Debug|Win32.Build.0 = Debug|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Debug|x86.Build.0 = Debug|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Release|Win32.ActiveCfg = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Release|Win32.Build.0 = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Release|x86.ActiveCfg = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.Release|x86.Build.0 = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.ReleaseWhiteList|Any CPU.ActiveCfg = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.ReleaseWhiteList|Any CPU.Build.0 = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.ReleaseWhiteList|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.ReleaseWhiteList|Mixed Platforms.Build.0 = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.ReleaseWhiteList|Win32.ActiveCfg = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.ReleaseWhiteList|Win32.Build.0 = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.ReleaseWhiteList|x86.ActiveCfg = Release|Any CPU
-		{2148A2D0-8534-4F74-8352-29CB8121DDF2}.ReleaseWhiteList|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -391,7 +365,7 @@ Global
 		{35933209-AD77-4DFB-9494-13243D5E281F} = {E87433B1-D691-4D36-BB6B-3B766192CC8E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35
 		SolutionGuid = {BB1B236A-1BE9-476A-A4B3-8C0F51F1FDA7}
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.2\lib\NET35
 	EndGlobalSection
 EndGlobal
