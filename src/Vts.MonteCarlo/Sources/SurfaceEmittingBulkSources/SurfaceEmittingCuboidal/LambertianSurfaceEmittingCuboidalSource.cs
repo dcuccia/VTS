@@ -1,7 +1,5 @@
 ﻿using System;
 using Vts.Common;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -18,7 +16,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="cubeLengthX">The length of the cube (along x axis)</param>
         /// <param name="cubeWidthY">The width of the cube (along y axis)</param>
         /// <param name="cubeHeightZ">The height of the cube (along z axis)</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="initialTissueRegionIndex">Initial tissue region index</param>
@@ -26,7 +24,7 @@ namespace Vts.MonteCarlo.Sources
             double cubeLengthX,
             double cubeWidthY,
             double cubeHeightZ,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             int initialTissueRegionIndex)
@@ -35,7 +33,7 @@ namespace Vts.MonteCarlo.Sources
             CubeLengthX = cubeLengthX;
             CubeWidthY = cubeWidthY;
             CubeHeightZ = cubeHeightZ;
-            SourceProfile = sourceProfile;
+            BeamDiameterFWHM = beamDiameterFWHM;
             NewDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis;
             TranslationFromOrigin = translationFromOrigin;
             InitialTissueRegionIndex = initialTissueRegionIndex;
@@ -47,20 +45,21 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="cubeLengthX">length</param>
         /// <param name="cubeWidthY">width</param>
         /// <param name="cubeHeightZ">height</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         public LambertianSurfaceEmittingCuboidalSourceInput(
             double cubeLengthX,
             double cubeWidthY,
             double cubeHeightZ,
-            ISourceProfile sourceProfile)
+            double beamDiameterFWHM)
             : this(
                 cubeLengthX,
                 cubeWidthY,
                 cubeHeightZ,
-                sourceProfile,
+                beamDiameterFWHM,
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
-                0) { }
+                0)
+        { }
 
         /// <summary>
         /// Initializes the default constructor of LambertianSurfaceEmittingCuboidalSourceInput class
@@ -70,10 +69,11 @@ namespace Vts.MonteCarlo.Sources
                 1.0,
                 1.0,
                 1.0,
-                new FlatSourceProfile(),
+                -1.0, // flat profile
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
-                0) { }
+                0)
+        { }
 
         /// <summary>
         /// Surface Emitting Cuboidal source type
@@ -92,9 +92,9 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         public double CubeHeightZ { get; set; }
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        public ISourceProfile SourceProfile { get; set; }
+        public double BeamDiameterFWHM { get; set; }
         /// <summary>
         /// New source axis direction
         /// </summary>
@@ -121,10 +121,11 @@ namespace Vts.MonteCarlo.Sources
                 this.CubeLengthX,
                 this.CubeWidthY,
                 this.CubeHeightZ,
-                this.SourceProfile,
+                this.BeamDiameterFWHM,
                 this.NewDirectionOfPrincipalSourceAxis,
                 this.TranslationFromOrigin,
-                this.InitialTissueRegionIndex) { Rng = rng };
+                this.InitialTissueRegionIndex)
+            { Rng = rng };
         }
     }
 
@@ -141,7 +142,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="cubeLengthX">The length of the cube (along x axis)</param>
         /// <param name="cubeWidthY">The width of the cube (along y axis)</param>
         /// <param name="cubeHeightZ">The height of the cube (along z axis)</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>       
         /// <param name="initialTissueRegionIndex">Initial tissue region index</param>
@@ -149,24 +150,20 @@ namespace Vts.MonteCarlo.Sources
             double cubeLengthX,
             double cubeWidthY,
             double cubeHeightZ,
-            ISourceProfile sourceProfile, 
-            Direction newDirectionOfPrincipalSourceAxis = null, 
+            double beamDiameterFWHM,
+            Direction newDirectionOfPrincipalSourceAxis = null,
             Position translationFromOrigin = null,
             int initialTissueRegionIndex = 0)
             : base(
-            cubeLengthX,
-            cubeWidthY,
-            cubeHeightZ,
-            sourceProfile,
-            SourceDefaults.DefaultHalfPolarAngleRange.Clone(),
-            newDirectionOfPrincipalSourceAxis,
-            translationFromOrigin,
-            initialTissueRegionIndex)
+                cubeLengthX,
+                cubeWidthY,
+                cubeHeightZ,
+                beamDiameterFWHM,
+                SourceDefaults.DefaultHalfPolarAngleRange.Clone(),
+                newDirectionOfPrincipalSourceAxis,
+                translationFromOrigin,
+                initialTissueRegionIndex)
         {
-            if (newDirectionOfPrincipalSourceAxis == null)
-                newDirectionOfPrincipalSourceAxis = SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone();
-            if (translationFromOrigin == null)
-                translationFromOrigin = SourceDefaults.DefaultPosition.Clone();
-        }        
+        }
     }
 }

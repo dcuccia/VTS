@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -12,9 +10,9 @@ namespace Vts.MonteCarlo.Sources
     public abstract class VolumetricCuboidalSourceBase : ISource
     {
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        protected ISourceProfile _sourceProfile;
+        protected double _beamDiameterFWHM;
         /// <summary>
         /// New source axis direction
         /// </summary>
@@ -50,7 +48,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="cubeLengthX">The length of the cuboid</param>
         /// <param name="cubeWidthY">The width of the cuboid</param>
         /// <param name="cubeHeightZ">The height of the cuboid</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="initialTissueRegionIndex">Initial tissue region index</param>
@@ -58,7 +56,7 @@ namespace Vts.MonteCarlo.Sources
             double cubeLengthX,
             double cubeWidthY,
             double cubeHeightZ,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             int initialTissueRegionIndex)
@@ -71,7 +69,7 @@ namespace Vts.MonteCarlo.Sources
             _cubeLengthX = cubeLengthX;
             _cubeWidthY = cubeWidthY;
             _cubeHeightZ = cubeHeightZ;
-            _sourceProfile = sourceProfile;
+            _beamDiameterFWHM = beamDiameterFWHM;
             _newDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis.Clone();
             _translationFromOrigin = translationFromOrigin.Clone();
             _initialTissueRegionIndex = initialTissueRegionIndex;
@@ -85,7 +83,7 @@ namespace Vts.MonteCarlo.Sources
         public Photon GetNextPhoton(ITissue tissue)
         {
             //Source starts from anywhere in the cuboid
-            Position finalPosition = GetFinalPositionFromProfileType(_sourceProfile, _cubeLengthX, _cubeWidthY, _cubeHeightZ, Rng);
+            Position finalPosition = GetFinalPosition(_beamDiameterFWHM, _cubeLengthX, _cubeWidthY, _cubeHeightZ, Rng);
 
             // sample angular distribution
             Direction finalDirection = GetFinalDirection();
@@ -112,32 +110,22 @@ namespace Vts.MonteCarlo.Sources
         /// <returns>new direction</returns>
         protected abstract Direction GetFinalDirection(); // position may or may not be needed
 
-        private static Position GetFinalPositionFromProfileType(ISourceProfile sourceProfile, double cubeLengthX, double cubeWidthY, double cubeHeightZ, Random rng)
+        private static Position GetFinalPosition(double beamDiameterFWHM, double cubeLengthX, double cubeWidthY, double cubeHeightZ, Random rng)
         {
-            Position finalPosition = null;
-            switch (sourceProfile.SourceProfileType)
-            {
-                case SourceProfileType.Flat:
-                    // var flatProfile = sourceProfile as FlatSourceProfile;
-                    SourceToolbox.GetPositionInACuboidRandomFlat(
+            return beamDiameterFWHM < 0.0
+                ? SourceToolbox.GetPositionInACuboidRandomFlat(
                         SourceDefaults.DefaultPosition.Clone(),
                         cubeLengthX,
                         cubeWidthY,
                         cubeHeightZ,
-                        rng);
-                    break;
-                case SourceProfileType.Gaussian:
-                    var gaussianProfile = sourceProfile as GaussianSourceProfile;
-                    finalPosition = SourceToolbox.GetPositionInACuboidRandomGaussian(
+                        rng)
+                : SourceToolbox.GetPositionInACuboidRandomGaussian(
                         SourceDefaults.DefaultPosition.Clone(),
                         0.5 * cubeLengthX,
                         0.5 * cubeWidthY,
                         0.5 * cubeHeightZ,
-                        gaussianProfile.BeamDiaFWHM,
+                        beamDiameterFWHM,
                         rng);
-                    break;
-            }
-            return finalPosition;
         }
 
         #region Random number generator code (copy-paste into all sources)

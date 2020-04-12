@@ -5,7 +5,6 @@ using Vts.Common;
 using Vts.MonteCarlo;
 using Vts.MonteCarlo.Helpers;
 using Vts.MonteCarlo.Sources;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 using Vts.MonteCarlo.Tissues;
 
 namespace Vts.Test.MonteCarlo.Sources
@@ -74,11 +73,10 @@ namespace Vts.Test.MonteCarlo.Sources
             read_data();
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
-            ITissue tissue = new MultiLayerTissue();             
-            var profile = new FlatSourceProfile();
+            ITissue tissue = new MultiLayerTissue();
+            var beamDiameterFWHM = -1.0; // flat profile
 
-
-            var ps = new CustomLineSource(_lengthX, profile, _polRange, _aziRange, _direction, _translation, _angPair)
+            var ps = new CustomLineSource(_lengthX, beamDiameterFWHM, _polRange, _aziRange, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -104,10 +102,8 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new GaussianSourceProfile(_bdFWHM);
 
-
-            var ps = new CustomLineSource(_lengthX, profile, _polRange, _aziRange, _direction, _translation, _angPair)
+            var ps = new CustomLineSource(_lengthX, _bdFWHM, _polRange, _aziRange, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -132,10 +128,9 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new FlatSourceProfile();
+            var beamDiameterFWHM = -1.0; // flat profile
 
-
-            var ps = new DirectionalLineSource(_polarAngle, _lengthX, profile, _direction, _translation, _angPair)
+            var ps = new DirectionalLineSource(_polarAngle, _lengthX, beamDiameterFWHM, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -161,10 +156,8 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new GaussianSourceProfile(_bdFWHM);
 
-
-            var ps = new DirectionalLineSource(_polarAngle, _lengthX, profile, _direction, _translation, _angPair)
+            var ps = new DirectionalLineSource(_polarAngle, _lengthX, _bdFWHM, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -189,10 +182,9 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new FlatSourceProfile();
+            var beamDiameterFWHM = -1.0; // flat profile
 
-
-            var ps = new IsotropicLineSource(_lengthX, profile, _direction, _translation, _angPair)
+            var ps = new IsotropicLineSource(_lengthX, beamDiameterFWHM, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -218,10 +210,8 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new GaussianSourceProfile(_bdFWHM);
 
-
-            var ps = new IsotropicLineSource(_lengthX, profile, _direction, _translation, _angPair)
+            var ps = new IsotropicLineSource(_lengthX, _bdFWHM, _direction, _translation, _angPair)
             {
                 Rng = rng
             };

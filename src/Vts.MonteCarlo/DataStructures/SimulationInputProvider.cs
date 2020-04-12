@@ -5,7 +5,6 @@ using Vts.Common;
 using Vts.MonteCarlo.Detectors;
 using Vts.MonteCarlo.Helpers;
 using Vts.MonteCarlo.Sources;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 using Vts.MonteCarlo.Tissues;
 
 namespace Vts.MonteCarlo
@@ -533,7 +532,7 @@ new ITissueRegion[]
                 new CustomCircularSourceInput(
                     3.0, // outer radius
                     0.0, // inner radius
-                    new GaussianSourceProfile(1.0), // fwhm
+                    1.0, // fwhm
                     new DoubleRange(0.0, 0.0), // polar angle emission range
                     new DoubleRange (0.0, 0.0), // azimuthal angle emmision range
                     new Direction(0, 0, 1), // normal to tissue
@@ -586,7 +585,7 @@ new ITissueRegion[]
                 new CustomCircularSourceInput(
                     3.0, // outer radius
                     0.0, // inner radius
-                    new FlatSourceProfile(), 
+                    -1.0, // flat profile
                     new DoubleRange(0.0, 0.0), // polar angle emission range
                     new DoubleRange(0.0, 0.0), // azimuthal angle emmision range
                     new Direction(0, 0, 1), // normal to tissue
@@ -638,7 +637,7 @@ new ITissueRegion[]
                     0),
                 new CustomLineSourceInput(
                     3.0, // line length
-                    new GaussianSourceProfile(1.0), // fwhm
+                    1.0, // fwhm
                     new DoubleRange(0.0, 0.0), // polar angle emission range
                     new DoubleRange(0.0, 0.0), // azimuthal angle emmision range
                     new Direction(0, 0, 1), // normal to tissue
@@ -917,7 +916,7 @@ new ITissueRegion[]
                     0.7071, // < 0: Converging beam, > 0: Diverging beam, = 0: Collimated beam
                     0.2, // outer radius in mm
                     0, // inner radius
-                    new FlatSourceProfile(), // flat beam
+                    -1.0, // flat beam
                     new Direction(0, 0, 1), // direction of principal source axis 
                     new Position(0.0, 0.0, 5.0), // translation from origin
                     new PolarAzimuthalAngles(0.0, 0.0), // beam rotation from inward normal

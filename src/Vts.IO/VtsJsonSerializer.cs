@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Unity;
-using Unity.Injection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -92,16 +90,6 @@ namespace Vts.IO
         }
     }
 
-    /// <summary>
-    /// Internal class for holding on to necessary class info for future instantiation
-    /// </summary>
-    internal class VtsClassInfo
-    {
-        public Type ClassType { get; set; }
-        public string ClassName { get; set; }
-        public string ClassPrefixString { get; set; }
-    }
-
     // from http://stackoverflow.com/questions/8030538/how-to-implement-custom-jsonconverter-in-json-net-to-deserialize-a-list-of-base
     public class ConventionBasedConverter2<TInterface> : JsonCreationConverter<TInterface>
     {
@@ -145,7 +133,6 @@ namespace Vts.IO
                 if (!_typeCategoryString.EndsWith("Type") || !jObject.ContainsKey(_typeCategoryString))
                     return null;
 
-
                 var typeName =
                     jObject[_typeCategoryString] +
                     typeof(TInterface).Name.Substring(1);
@@ -165,83 +152,6 @@ namespace Vts.IO
             var classInstance = (TInterface)ServiceProvider.Value.GetRequiredService(typeToUse);
 
             return classInstance;
-        }
-    }
-
-    // from http://stackoverflow.com/questions/8030538/how-to-implement-custom-jsonconverter-in-json-net-to-deserialize-a-list-of-base
-    public class ConventionBasedConverter<TInterface> : JsonCreationConverter<TInterface> 
-    {
-        private static readonly UnityContainer _container = new UnityContainer();
-
-        private readonly string _typeCategoryString;
-        private readonly IDictionary<string, VtsClassInfo> _classInfoDictionary;
-  
-
-        public ConventionBasedConverter(string typeNamespace, string assemblyFullName, string typeCategoryString, IEnumerable<string> classPrefixStrings, string classBasename = null)
-        {
-            var interfaceType = typeof(TInterface);
-            var classBasename1 = classBasename ?? interfaceType.Name.Substring(1);
-            _typeCategoryString = typeCategoryString;
-
-            var useDefaultConstructor = true;
-
-            var classList =
-                from classPrefixString in classPrefixStrings
-                let className = typeNamespace + @"." + classPrefixString + classBasename1
-                let classType = Type.GetType(className + "," + assemblyFullName, false, true)
-                select new VtsClassInfo
-                {
-                    ClassType = classType,
-                    ClassName = className,
-                    ClassPrefixString = classPrefixString,
-                };
-
-            foreach (var item in classList)
-            {
-                if (!object.Equals(item.ClassType, null))
-                {
-                    _container.RegisterType(
-                        interfaceType,
-                        item.ClassType,
-                        item.ClassPrefixString, // use the prefix string to register each class
-                        useDefaultConstructor ? new InjectionMember[] { new InjectionConstructor() } : null);
-                }
-            }
-
-            _classInfoDictionary = classList.ToDictionary(item => item.ClassPrefixString);
-        }
-        
-        public static ConventionBasedConverter<TInterface> CreateFromEnum<TEnum>(string typeNamespace, string assemblyFullName, string classBasename = null)
-        {
-            return new ConventionBasedConverter<TInterface>(
-                typeNamespace,
-                assemblyFullName,
-                typeof(TEnum).Name,
-                // use convention to map class names to enum types  e.g. ThingyType.First will register to FirstThingy 
-                EnumHelper.GetValues<TEnum>().Select(value => value.ToString()),
-                classBasename);
-        }
-
-        protected override TInterface Create(Type objectType, JObject jObject)
-        {
-            if (!FieldExists(_typeCategoryString, jObject))
-            {
-                throw new Exception(String.Format("The given object type {0} is not supported!", objectType));
-            }
-
-            var classPrefixString = jObject[_typeCategoryString].ToString();
-            
-            // get name of Enum from interface (e.g. if it's "IThingy", get "ThingyType" Enum and generate names for all source classes, and then use the corresponding factory, possibly also using convention "ThingyFactory")
-            var classInfo = _classInfoDictionary[classPrefixString];
-
-            var classInstance = _container.Resolve<TInterface>(classInfo.ClassPrefixString);
-
-            return classInstance;
-        }
-
-        private bool FieldExists(string fieldName, JObject jObject)
-        {
-            return jObject[fieldName] != null;
         }
     }
 

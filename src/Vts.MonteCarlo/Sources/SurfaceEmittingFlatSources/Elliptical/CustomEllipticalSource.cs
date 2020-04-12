@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -19,7 +17,7 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         /// <param name="aParameter">"a" parameter of the ellipse source</param>
         /// <param name="bParameter">"b" parameter of the ellipse source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="polarAngleEmissionRange">Polar angle range</param>
         /// <param name="azimuthalAngleEmissionRange">Azimuthal angle range</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
@@ -29,7 +27,7 @@ namespace Vts.MonteCarlo.Sources
         public CustomEllipticalSourceInput(
             double aParameter,
             double bParameter,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             DoubleRange polarAngleEmissionRange,
             DoubleRange azimuthalAngleEmissionRange,
             Direction newDirectionOfPrincipalSourceAxis,
@@ -40,7 +38,7 @@ namespace Vts.MonteCarlo.Sources
             SourceType = "CustomElliptical";
             AParameter = aParameter;
             BParameter = bParameter;
-            SourceProfile = sourceProfile;
+            BeamDiameterFWHM = beamDiameterFWHM;
             PolarAngleEmissionRange = polarAngleEmissionRange;
             AzimuthalAngleEmissionRange = azimuthalAngleEmissionRange;
             NewDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis;
@@ -54,19 +52,19 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         /// <param name="aParameter">"a" parameter of the ellipse source</param>
         /// <param name="bParameter">"b" parameter of the ellipse source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="polarAngleEmissionRange">Polar angle range</param>
         /// <param name="azimuthalAngleEmissionRange">Azimuthal angle range</param>
         public CustomEllipticalSourceInput(
             double aParameter,
             double bParameter,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             DoubleRange polarAngleEmissionRange,
             DoubleRange azimuthalAngleEmissionRange)
             : this(
                 aParameter,
                 bParameter,
-                sourceProfile,
+                beamDiameterFWHM,
                 polarAngleEmissionRange,
                 azimuthalAngleEmissionRange,
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
@@ -81,7 +79,7 @@ namespace Vts.MonteCarlo.Sources
             : this(
                 1.0,
                 2.0,
-                new FlatSourceProfile(),
+                -1.0, // flat profile
                 SourceDefaults.DefaultHalfPolarAngleRange.Clone(),
                 SourceDefaults.DefaultAzimuthalAngleRange.Clone(),
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
@@ -102,9 +100,9 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         public double BParameter { get; set; }
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        public ISourceProfile SourceProfile { get; set; }
+        public double BeamDiameterFWHM { get; set; }
         /// <summary>
         /// Polar angle range
         /// </summary>
@@ -142,7 +140,7 @@ namespace Vts.MonteCarlo.Sources
             return new CustomEllipticalSource(
                 this.AParameter,
                 this.BParameter,
-                this.SourceProfile,
+                this.BeamDiameterFWHM,
                 this.PolarAngleEmissionRange,
                 this.AzimuthalAngleEmissionRange,
                 this.NewDirectionOfPrincipalSourceAxis,
@@ -168,7 +166,7 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         /// <param name="aParameter">"a" parameter of the ellipse source</param>
         /// <param name="bParameter">"b" parameter of the ellipse source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="polarAngleEmissionRange">Polar angle emission range</param>
         /// <param name="azimuthalAngleEmissionRange">Azimuthal angle emission range</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
@@ -178,7 +176,7 @@ namespace Vts.MonteCarlo.Sources
         public CustomEllipticalSource(
             double aParameter,
             double bParameter,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             DoubleRange polarAngleEmissionRange,
             DoubleRange azimuthalAngleEmissionRange,
             Direction newDirectionOfPrincipalSourceAxis = null,
@@ -188,7 +186,7 @@ namespace Vts.MonteCarlo.Sources
             : base(
                 aParameter,
                 bParameter,
-                sourceProfile,
+                beamDiameterFWHM,
                 newDirectionOfPrincipalSourceAxis,
                 translationFromOrigin,
                 beamRotationFromInwardNormal,
@@ -196,12 +194,6 @@ namespace Vts.MonteCarlo.Sources
         {
             _polarAngleEmissionRange = polarAngleEmissionRange.Clone();
             _azimuthalAngleEmissionRange = azimuthalAngleEmissionRange.Clone();
-            if (newDirectionOfPrincipalSourceAxis == null)
-                newDirectionOfPrincipalSourceAxis = SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone();
-            if (translationFromOrigin == null)
-                translationFromOrigin = SourceDefaults.DefaultPosition.Clone();
-            if (beamRotationFromInwardNormal == null)
-                beamRotationFromInwardNormal = SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone();
         }
 
         /// <summary>

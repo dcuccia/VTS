@@ -6,8 +6,6 @@ using Vts.IO;
 using Vts.MonteCarlo;
 using Vts.MonteCarlo.Helpers;
 using Vts.MonteCarlo.Sources;
-using Vts.MonteCarlo.Sources.SourceProfiles;
-using Vts.MonteCarlo.Tissues;
 
 namespace Vts.Test.MonteCarlo
 {
@@ -119,7 +117,7 @@ namespace Vts.Test.MonteCarlo
                 ThetaConvOrDiv = 0,
                 SourceType = "DirectionalLine",
                 LineLength = 1,
-                SourceProfile = new FlatSourceProfile(),
+                BeamDiameterFWHM = -1.0, // flat profile
                 NewDirectionOfPrincipalSourceAxis = new Direction {
                   Ux = 0,
                   Uy = 0,
@@ -139,7 +137,7 @@ namespace Vts.Test.MonteCarlo
               new IsotropicLineSourceInput {
                 SourceType = "IsotropicLine",
                 LineLength = 1,
-                SourceProfile = new FlatSourceProfile(),
+                BeamDiameterFWHM = -1.0, // flat profile
                 NewDirectionOfPrincipalSourceAxis = new Direction {
                   Ux = 0,
                   Uy = 0,
@@ -159,7 +157,7 @@ namespace Vts.Test.MonteCarlo
               new CustomLineSourceInput {
                 SourceType = "CustomLine",
                 LineLength = 1,
-                SourceProfile = new FlatSourceProfile (),
+                BeamDiameterFWHM = -1.0, // flat profile
                 PolarAngleEmissionRange = new DoubleRange {
                   Start = 0,
                   Stop = 3.14159265358979,
@@ -193,7 +191,7 @@ namespace Vts.Test.MonteCarlo
                 SourceType = "DirectionalCircular",
                 OuterRadius = 1,
                 InnerRadius = 0,
-                SourceProfile = new FlatSourceProfile (),
+                BeamDiameterFWHM = -1.0, // flat profile
                 NewDirectionOfPrincipalSourceAxis = new Direction {
                   Ux = 0,
                   Uy = 0,
@@ -214,7 +212,7 @@ namespace Vts.Test.MonteCarlo
                 SourceType = "CustomCircular",
                 OuterRadius = 1,
                 InnerRadius = 0,
-                SourceProfile = new FlatSourceProfile (),
+                BeamDiameterFWHM = -1.0, // flat profile
                 PolarAngleEmissionRange = new DoubleRange {
                   Start = 0,
                   Stop = 1.5707963267949,
@@ -248,7 +246,7 @@ namespace Vts.Test.MonteCarlo
                 SourceType = "DirectionalElliptical",
                 AParameter = 1,
                 BParameter = 2,
-                SourceProfile = new FlatSourceProfile(),
+                BeamDiameterFWHM = -1.0, // flat profile
                 NewDirectionOfPrincipalSourceAxis = new Direction {
                   Ux = 0,
                   Uy = 0,
@@ -269,7 +267,7 @@ namespace Vts.Test.MonteCarlo
                 SourceType = "CustomElliptical",
                 AParameter = 1,
                 BParameter = 2,
-                SourceProfile = new FlatSourceProfile (),
+                BeamDiameterFWHM = -1.0, // flat profile
                 PolarAngleEmissionRange = new DoubleRange {
                   Start = 0,
                   Stop = 1.5707963267949,
@@ -303,7 +301,7 @@ namespace Vts.Test.MonteCarlo
                 SourceType = "DirectionalRectangular",
                 RectLengthX = 1,
                 RectWidthY = 2,
-                SourceProfile = new FlatSourceProfile(),
+                BeamDiameterFWHM = -1.0, // flat profile
                 NewDirectionOfPrincipalSourceAxis = new Direction {
                   Ux = 0,
                   Uy = 0,
@@ -324,7 +322,7 @@ namespace Vts.Test.MonteCarlo
                 SourceType = "CustomRectangular",
                 RectLengthX = 1,
                 RectWidthY = 2,
-                SourceProfile = new FlatSourceProfile(),
+                BeamDiameterFWHM = -1.0, // flat profile
                 PolarAngleEmissionRange = new DoubleRange {
                   Start = 0,
                   Stop = 1.5707963267949,
@@ -413,7 +411,7 @@ namespace Vts.Test.MonteCarlo
                 CubeLengthX = 1,
                 CubeWidthY = 1,
                 CubeHeightZ = 1,
-                SourceProfile = new FlatSourceProfile(),
+                BeamDiameterFWHM = -1.0, // flat profile
                 NewDirectionOfPrincipalSourceAxis = new Direction {
                   Ux = 0,
                   Uy = 0,
@@ -447,7 +445,7 @@ namespace Vts.Test.MonteCarlo
                 CubeLengthX = 1,
                 CubeWidthY = 1,
                 CubeHeightZ = 1,
-                SourceProfile = new FlatSourceProfile(),
+                BeamDiameterFWHM = -1.0, // flat profile
                 NewDirectionOfPrincipalSourceAxis = new Direction {
                   Ux = 0,
                   Uy = 0,
@@ -465,7 +463,7 @@ namespace Vts.Test.MonteCarlo
                 CubeLengthX = 1,
                 CubeWidthY = 1,
                 CubeHeightZ = 1,
-                SourceProfile = new FlatSourceProfile(),
+                BeamDiameterFWHM = -1.0, // flat profile
                 PolarAngleEmissionRange = new DoubleRange {
                   Start = 0,
                   Stop = 3.14159265358979,
@@ -495,7 +493,7 @@ namespace Vts.Test.MonteCarlo
                 AParameter = 1,
                 BParameter = 1,
                 CParameter = 2,
-                SourceProfile = new FlatSourceProfile(),
+                BeamDiameterFWHM = -1.0, // flat profile
                 NewDirectionOfPrincipalSourceAxis = new Direction {
                   Ux = 0,
                   Uy = 0,
@@ -513,7 +511,7 @@ namespace Vts.Test.MonteCarlo
                 AParameter = 1,
                 BParameter = 1,
                 CParameter = 2,
-                SourceProfile = new FlatSourceProfile (),
+                BeamDiameterFWHM = -1.0, // flat profile
                 PolarAngleEmissionRange = new DoubleRange {
                   Start = 0,
                   Stop = 3.14159265358979,

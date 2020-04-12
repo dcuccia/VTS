@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -19,7 +17,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="aParameter">"a" parameter of the ellipsoid source</param>
         /// <param name="bParameter">"b" parameter of the ellipsoid source</param>
         /// <param name="cParameter">"c" parameter of the ellipsoid source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="polarAngleEmissionRange">Polar angle range</param>
         /// <param name="azimuthalAngleEmissionRange">Azimuthal angle range</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
@@ -29,7 +27,7 @@ namespace Vts.MonteCarlo.Sources
             double aParameter,
             double bParameter,
             double cParameter,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             DoubleRange polarAngleEmissionRange,
             DoubleRange azimuthalAngleEmissionRange,
             Direction newDirectionOfPrincipalSourceAxis,
@@ -40,7 +38,7 @@ namespace Vts.MonteCarlo.Sources
             AParameter = aParameter;
             BParameter = bParameter;
             CParameter = cParameter;
-            SourceProfile = sourceProfile;
+            BeamDiameterFWHM = beamDiameterFWHM;
             PolarAngleEmissionRange = polarAngleEmissionRange;
             AzimuthalAngleEmissionRange = azimuthalAngleEmissionRange;
             NewDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis;
@@ -54,21 +52,21 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="aParameter">"a" parameter of the ellipsoid source</param>
         /// <param name="bParameter">"b" parameter of the ellipsoid source</param>
         /// <param name="cParameter">"c" parameter of the ellipsoid source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="polarAngleEmissionRange">Polar angle range</param>
         /// <param name="azimuthalAngleEmissionRange">Azimuthal angle range</param>
         public CustomVolumetricEllipsoidalSourceInput(
             double aParameter,
             double bParameter,
             double cParameter,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             DoubleRange polarAngleEmissionRange,
             DoubleRange azimuthalAngleEmissionRange)
             : this(
                 aParameter,
                 bParameter,
                 cParameter,
-                sourceProfile,
+                beamDiameterFWHM,
                 polarAngleEmissionRange,
                 azimuthalAngleEmissionRange,
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
@@ -83,7 +81,7 @@ namespace Vts.MonteCarlo.Sources
                 1.0,
                 1.0,
                 2.0,
-                new FlatSourceProfile(),
+                -1.0, // flat profile
                 SourceDefaults.DefaultFullPolarAngleRange.Clone(),
                 SourceDefaults.DefaultAzimuthalAngleRange.Clone(),
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
@@ -107,9 +105,9 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         public double CParameter { get; set; }
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        public ISourceProfile SourceProfile { get; set; }
+        public double BeamDiameterFWHM { get; set; }
         /// <summary>
         /// Polar angle range
         /// </summary>
@@ -144,7 +142,7 @@ namespace Vts.MonteCarlo.Sources
                 this.AParameter,
                 this.BParameter,
                 this.CParameter,
-                this.SourceProfile,
+                this.BeamDiameterFWHM,
                 this.PolarAngleEmissionRange,
                 this.AzimuthalAngleEmissionRange,
                 this.NewDirectionOfPrincipalSourceAxis,
@@ -170,7 +168,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="aParameter">"a" parameter of the ellipsoid source</param>
         /// <param name="bParameter">"b" parameter of the ellipsoid source</param>
         /// <param name="cParameter">"c" parameter of the ellipsoid source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="polarAngleEmissionRange">Polar angle emission range</param>
         /// <param name="azimuthalAngleEmissionRange">Azimuthal angle emission range</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
@@ -180,7 +178,7 @@ namespace Vts.MonteCarlo.Sources
             double aParameter,
             double bParameter,
             double cParameter,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             DoubleRange polarAngleEmissionRange,
             DoubleRange azimuthalAngleEmissionRange,
             Direction newDirectionOfPrincipalSourceAxis = null,
@@ -190,18 +188,13 @@ namespace Vts.MonteCarlo.Sources
                 aParameter,
                 bParameter,
                 cParameter,
-                sourceProfile,
+                beamDiameterFWHM,
                 newDirectionOfPrincipalSourceAxis,
                 translationFromOrigin,
                 initialTissueRegionIndex)
         {
             _polarAngleEmissionRange = polarAngleEmissionRange.Clone();
             _azimuthalAngleEmissionRange = azimuthalAngleEmissionRange.Clone();
-
-            if (newDirectionOfPrincipalSourceAxis == null)
-                newDirectionOfPrincipalSourceAxis = SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone();
-            if (translationFromOrigin == null)
-                translationFromOrigin = SourceDefaults.DefaultPosition.Clone();
         }
 
         /// <summary>

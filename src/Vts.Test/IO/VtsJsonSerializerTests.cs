@@ -21,20 +21,14 @@ namespace Vts.Test.IO
         string ThingyType { get; }
     }
 
-    public enum ThingyType
-    {
-        First,
-        Second
-    }
-
     public class FirstThingy : IThingy
     {
-        public string ThingyType { get { return "First"; } }
+        public string ThingyType => "First";
     }
 
     public class SecondThingy : IThingy
     {
-        public string ThingyType { get { return "Second"; } }
+        public string ThingyType => "Second";
     }
     #endregion
 
@@ -96,10 +90,10 @@ namespace Vts.Test.IO
         [Test]
         public void validate_deserialization_of_interface_object_from_string()
         {
-            var exampleEnumType = typeof(FirstThingy);
-            VtsJsonSerializer.KnownConverters.Add(ConventionBasedConverter<IThingy>.CreateFromEnum<ThingyType>(
-                exampleEnumType.Namespace,
-                exampleEnumType.Assembly.FullName));
+
+            VtsJsonSerializer.KnownConverters.Add(
+                new ConventionBasedConverter2<IThingy>("ThingyType"));
+
             var compositeThingy = new CompositeThingy
             {
                 OneThingy = new FirstThingy(),

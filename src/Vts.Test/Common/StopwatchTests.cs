@@ -13,8 +13,8 @@ namespace Vts.Test.Common
             Thread.Sleep(100);
             stopwatch.Stop();
 
-            Assert.IsTrue(stopwatch.ElapsedMilliseconds >= 90);
-            Assert.IsTrue(stopwatch.ElapsedMilliseconds <= 110);
+            Assert.IsTrue(stopwatch.ElapsedMilliseconds >= 80);
+            Assert.IsTrue(stopwatch.ElapsedMilliseconds <= 120);
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -19,7 +17,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="thetaConvOrDiv">Convergence(negative angle in radians) or Divergence (positive angle in radians) angle {= 0, for a collimated beam}</param>
         /// <param name="outerRadius">The outer radius of the circular source</param>
         /// <param name="innerRadius">The inner radius of the circular source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="beamRotationFromInwardNormal">beam rotation angle</param>
@@ -28,7 +26,7 @@ namespace Vts.MonteCarlo.Sources
             double thetaConvOrDiv,
             double outerRadius,
             double innerRadius,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             PolarAzimuthalAngles beamRotationFromInwardNormal,
@@ -38,7 +36,7 @@ namespace Vts.MonteCarlo.Sources
             ThetaConvOrDiv = thetaConvOrDiv;
             OuterRadius = outerRadius;
             InnerRadius = innerRadius;
-            SourceProfile = sourceProfile;
+            BeamDiameterFWHM = beamDiameterFWHM;
             NewDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis;
             TranslationFromOrigin = translationFromOrigin;
             BeamRotationFromInwardNormal = beamRotationFromInwardNormal;
@@ -51,17 +49,17 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="thetaConvOrDiv">Convergence(negative angle in radians) or Divergence (positive angle in radians) angle {= 0, for a collimated beam}</param>
         /// <param name="outerRadius">The outer radius of the circular source</param>
         /// <param name="innerRadius">The inner radius of the circular source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         public DirectionalCircularSourceInput(
             double thetaConvOrDiv,
             double outerRadius,
             double innerRadius,
-            ISourceProfile sourceProfile)
-            : this(
+            double beamDiameterFWHM)
+            : this (
                 thetaConvOrDiv,
                 outerRadius,
                 innerRadius,
-                sourceProfile,
+                beamDiameterFWHM,
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
                 SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone(),
@@ -75,7 +73,7 @@ namespace Vts.MonteCarlo.Sources
                 0.0,
                 1.0,
                 0.0,
-                new FlatSourceProfile(),
+                -1.0, // flat beam
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
                 SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone(),
@@ -98,9 +96,9 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         public double InnerRadius { get; set; }
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        public ISourceProfile SourceProfile { get; set; }
+        public double BeamDiameterFWHM { get; set; }
         /// <summary>
         /// New source axis direction
         /// </summary>
@@ -131,7 +129,7 @@ namespace Vts.MonteCarlo.Sources
                 this.ThetaConvOrDiv,
                 this.OuterRadius,
                 this.InnerRadius,
-                this.SourceProfile,
+                this.BeamDiameterFWHM,
                 this.NewDirectionOfPrincipalSourceAxis,
                 this.TranslationFromOrigin,
                 this.BeamRotationFromInwardNormal,
@@ -154,7 +152,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="thetaConvOrDiv">Convergence(negative angle in radians) or Divergence (positive angle in radians) angle {= 0, for a collimated beam}</param>
         /// <param name="innerRadius">The inner radius of the circular source</param>
         /// <param name="outerRadius">The outer radius of the circular source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="beamRotationFromInwardNormal">Polar Azimuthal Rotational Angle of inward Normal</param>
@@ -163,7 +161,7 @@ namespace Vts.MonteCarlo.Sources
             double thetaConvOrDiv,            
             double outerRadius,
             double innerRadius,
-            ISourceProfile sourceProfile, 
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis = null,
             Position translationFromOrigin = null,
             PolarAzimuthalAngles beamRotationFromInwardNormal = null,
@@ -171,19 +169,13 @@ namespace Vts.MonteCarlo.Sources
             : base(
                 outerRadius,
                 innerRadius,
-                sourceProfile,
+                beamDiameterFWHM,
                 newDirectionOfPrincipalSourceAxis,
                 translationFromOrigin,
                 beamRotationFromInwardNormal,
                 initialTissueRegionIndex)
         {
             _thetaConvOrDiv = thetaConvOrDiv;
-            if (newDirectionOfPrincipalSourceAxis == null)
-                newDirectionOfPrincipalSourceAxis = SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone();
-            if (translationFromOrigin == null)
-                translationFromOrigin = SourceDefaults.DefaultPosition.Clone();
-            if (beamRotationFromInwardNormal == null)
-                beamRotationFromInwardNormal = SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone();
         }
         
         /// <summary>
@@ -194,19 +186,19 @@ namespace Vts.MonteCarlo.Sources
         protected override Direction GetFinalDirection(Position position)
         {
             if (_outerRadius == 0.0)
-                return (SourceToolbox.GetDirectionForGivenPolarAzimuthalAngleRangeRandom(
+            {
+                return SourceToolbox.GetDirectionForGivenPolarAzimuthalAngleRangeRandom(
                             new DoubleRange(0.0, Math.Abs(_thetaConvOrDiv)),
                             SourceDefaults.DefaultAzimuthalAngleRange.Clone(),
-                            Rng));
-            else
-            {
-                // sign is negative for diverging and positive positive for converging 
-                var polarAngle = SourceToolbox.UpdatePolarAngleForDirectionalSources(
-                    _outerRadius,
-                    Math.Sqrt(position.X * position.X + position.Y * position.Y),
-                    _thetaConvOrDiv);                 
-                return (SourceToolbox.GetDirectionForGiven2DPositionAndGivenPolarAngle(polarAngle, position));
+                            Rng);
             }
+
+            // sign is negative for diverging and positive positive for converging 
+            var polarAngle = SourceToolbox.UpdatePolarAngleForDirectionalSources(
+                _outerRadius,
+                Math.Sqrt(position.X * position.X + position.Y * position.Y),
+                _thetaConvOrDiv);                 
+            return (SourceToolbox.GetDirectionForGiven2DPositionAndGivenPolarAngle(polarAngle, position));
         }
     }
 }

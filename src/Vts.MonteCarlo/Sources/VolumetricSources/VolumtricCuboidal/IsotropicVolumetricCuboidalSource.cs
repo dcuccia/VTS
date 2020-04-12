@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -19,7 +17,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="cubeLengthX">Length of the cuboid</param>
         /// <param name="cubeWidthY">Width of the cuboid</param>
         /// <param name="cubeHeightZ">Height of the cuboid</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="initialTissueRegionIndex">Initial tissue region index</param>
@@ -27,7 +25,7 @@ namespace Vts.MonteCarlo.Sources
             double cubeLengthX,
             double cubeWidthY,
             double cubeHeightZ,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             int initialTissueRegionIndex)
@@ -36,7 +34,7 @@ namespace Vts.MonteCarlo.Sources
             CubeLengthX = cubeLengthX;
             CubeWidthY = cubeWidthY;
             CubeHeightZ = cubeHeightZ;
-            SourceProfile = sourceProfile;
+            BeamDiameterFWHM = beamDiameterFWHM;
             NewDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis;
             TranslationFromOrigin = translationFromOrigin;
             InitialTissueRegionIndex = initialTissueRegionIndex;
@@ -48,17 +46,17 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="cubeLengthX">Length of the cuboid</param>
         /// <param name="cubeWidthY">Width of the cuboid</param>
         /// <param name="cubeHeightZ">Height of the cuboid</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         public IsotropicVolumetricCuboidalSourceInput(
             double cubeLengthX,
             double cubeWidthY,
             double cubeHeightZ,
-            ISourceProfile sourceProfile)
+            double beamDiameterFWHM)
             : this(
                 cubeLengthX,
                 cubeWidthY,
                 cubeHeightZ,
-                sourceProfile,
+                beamDiameterFWHM,
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
                 0) { }
@@ -71,7 +69,7 @@ namespace Vts.MonteCarlo.Sources
                 1.0,
                 1.0,
                 1.0,
-                new FlatSourceProfile(),
+                -1.0, // flat profile
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
                 0) { }
@@ -93,9 +91,9 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         public double CubeHeightZ { get; set; }
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        public ISourceProfile SourceProfile { get; set; }
+        public double BeamDiameterFWHM { get; set; }
         /// <summary>
         /// New source axis direction
         /// </summary>
@@ -122,7 +120,7 @@ namespace Vts.MonteCarlo.Sources
                 this.CubeLengthX,
                 this.CubeWidthY,
                 this.CubeHeightZ,
-                this.SourceProfile,
+                this.BeamDiameterFWHM,
                 this.NewDirectionOfPrincipalSourceAxis,
                 this.TranslationFromOrigin,
                 this.InitialTissueRegionIndex) { Rng = rng };
@@ -134,7 +132,7 @@ namespace Vts.MonteCarlo.Sources
     /// profile, direction, position, and initial tissue region index.
     /// </summary>
     public class IsotropicVolumetricCuboidalSource : VolumetricCuboidalSourceBase
-    {      
+    {
 
         /// <summary>
         /// Returns an instance of  Isotropic Cuboidal Source with a given source profile (Flat/Gaussian), 
@@ -143,7 +141,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="cubeLengthX">The length of the cuboid</param>
         /// <param name="cubeWidthY">The width of the cuboid</param>
         /// <param name="cubeHeightZ">The height of the cuboid</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="initialTissueRegionIndex">Initial tissue region index</param>
@@ -151,7 +149,7 @@ namespace Vts.MonteCarlo.Sources
             double cubeLengthX,
             double cubeWidthY,
             double cubeHeightZ,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis = null,
             Position translationFromOrigin = null,
             int initialTissueRegionIndex = 0)
@@ -159,15 +157,11 @@ namespace Vts.MonteCarlo.Sources
                 cubeLengthX,
                 cubeWidthY,
                 cubeHeightZ,
-                sourceProfile,
+                beamDiameterFWHM,
                 newDirectionOfPrincipalSourceAxis,
                 translationFromOrigin,
                 initialTissueRegionIndex)
         {
-            if (newDirectionOfPrincipalSourceAxis == null)
-                newDirectionOfPrincipalSourceAxis = SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone();
-            if (translationFromOrigin == null)
-                translationFromOrigin = SourceDefaults.DefaultPosition.Clone();
         }
 
         /// <summary>

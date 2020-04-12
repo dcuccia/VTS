@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -12,9 +10,9 @@ namespace Vts.MonteCarlo.Sources
     public abstract class RectangularSourceBase : ISource
     {
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        protected ISourceProfile _sourceProfile;
+        protected double _beamDiameterFWHM;
         /// <summary>
         /// New source axis direction
         /// </summary>
@@ -49,7 +47,7 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         /// <param name="rectLengthX">The length of the Rectangular Source</param>
         /// <param name="rectWidthY">The width of the Rectangular Source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>    
         /// <param name="beamRotationFromInwardNormal">Polar Azimuthal Rotational Angle of inward Normal</param>
@@ -57,7 +55,7 @@ namespace Vts.MonteCarlo.Sources
         protected RectangularSourceBase(
             double rectLengthX,
             double rectWidthY,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             PolarAzimuthalAngles beamRotationFromInwardNormal,
@@ -70,7 +68,7 @@ namespace Vts.MonteCarlo.Sources
             
             _rectLengthX = rectLengthX;
             _rectWidthY = rectWidthY;
-            _sourceProfile = sourceProfile;
+            _beamDiameterFWHM = beamDiameterFWHM;
             _newDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis.Clone();
             _translationFromOrigin = translationFromOrigin.Clone();
             _beamRotationFromInwardNormal = beamRotationFromInwardNormal.Clone();
@@ -85,7 +83,7 @@ namespace Vts.MonteCarlo.Sources
         public Photon GetNextPhoton(ITissue tissue)
         {
             //Source starts from anywhere in the line
-            Position finalPosition = GetFinalPositionFromProfileType(_sourceProfile, _rectLengthX, _rectWidthY, Rng);
+            Position finalPosition = GetFinalPosition(_beamDiameterFWHM, _rectLengthX, _rectWidthY, Rng);
 
             // sample angular distribution
             Direction finalDirection = GetFinalDirection(finalPosition);
@@ -119,7 +117,7 @@ namespace Vts.MonteCarlo.Sources
         /// <returns>Position</returns>
         protected virtual Position GetFinalPosition()
         {
-            return GetFinalPositionFromProfileType(_sourceProfile, _rectLengthX, _rectWidthY, Rng);
+            return GetFinalPosition(_beamDiameterFWHM, _rectLengthX, _rectWidthY, Rng);
         }
         /// <summary>
         /// returns final position from profile type
@@ -129,30 +127,20 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="rectWidthY">rectangular length in y direction (width)</param>
         /// <param name="rng">random number generator</param>
         /// <returns>Position</returns>
-        protected static Position GetFinalPositionFromProfileType(ISourceProfile sourceProfile, double rectLengthX, double rectWidthY, Random rng)
+        protected static Position GetFinalPosition(double beamDimeterFWHM, double rectLengthX, double rectWidthY, Random rng)
         {
-            Position finalPosition = SourceDefaults.DefaultPosition.Clone();
-            switch (sourceProfile.SourceProfileType)
-            {
-                case SourceProfileType.Flat:
-                    // var flatProfile = sourceProfile as FlatSourceProfile;
-                    finalPosition = SourceToolbox.GetPositionInARectangleRandomFlat(
+            return beamDimeterFWHM < 0
+                ? SourceToolbox.GetPositionInARectangleRandomFlat(
                         SourceDefaults.DefaultPosition.Clone(),
                         rectLengthX,
                         rectWidthY,
-                        rng);
-                    break;                                
-                case SourceProfileType.Gaussian:
-                    var gaussianProfile = sourceProfile as GaussianSourceProfile;
-                    finalPosition = SourceToolbox.GetPositionInARectangleRandomGaussian(
+                        rng)
+                : SourceToolbox.GetPositionInARectangleRandomGaussian(
                         SourceDefaults.DefaultPosition.Clone(),
                         0.5*rectLengthX,
                         0.5*rectWidthY,
-                        gaussianProfile.BeamDiaFWHM,
+                        beamDimeterFWHM,
                         rng);
-                    break;
-            }
-            return finalPosition;
         }
 
         #region Random number generator code (copy-paste into all sources)

@@ -3,11 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Vts.IO;
-using Vts.MonteCarlo.Detectors;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources;
-using Vts.MonteCarlo.Sources.SourceProfiles;
-using Vts.MonteCarlo.Tissues;
 
 namespace Vts.MonteCarlo.IO
 {
@@ -15,7 +10,6 @@ namespace Vts.MonteCarlo.IO
     {
         static VtsMonteCarloJsonSerializer()
         {
-            var exampleEnumType = typeof(FlatSourceProfile);
             var knownConverters = new List<JsonConverter>
             {
                 new ConventionBasedConverter2<ISourceInput>("SourceType"),
@@ -23,9 +17,6 @@ namespace Vts.MonteCarlo.IO
                 new ConventionBasedConverter2<ITissueRegion>("TissueRegionType"),
                 new ConventionBasedConverter2<IDetectorInput>("TallyType"),
                 new ConventionBasedConverter2<IDetector>("TallyType"),
-                ConventionBasedConverter<ISourceProfile>.CreateFromEnum<SourceProfileType>(
-                    exampleEnumType.Namespace,
-                    exampleEnumType.Assembly.FullName),
             };
 
             VtsJsonSerializer.KnownConverters.AddRange(knownConverters);

@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -19,7 +17,7 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         /// <param name="thetaConvOrDiv">Covergence or Divergance Angle {= 0, for a collimated beam} {= 0, for a collimated beam}</param>
         /// <param name="lineLength">The length of the line source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="beamRotationFromInwardNormal">beam rotation angle</param>
@@ -27,7 +25,7 @@ namespace Vts.MonteCarlo.Sources
         public DirectionalLineSourceInput(
             double thetaConvOrDiv,
             double lineLength,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             PolarAzimuthalAngles beamRotationFromInwardNormal,
@@ -36,7 +34,7 @@ namespace Vts.MonteCarlo.Sources
             SourceType = "DirectionalLine";
             ThetaConvOrDiv = thetaConvOrDiv;
             LineLength = lineLength;
-            SourceProfile = sourceProfile;
+            BeamDiameterFWHM = beamDiameterFWHM;
             NewDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis;
             TranslationFromOrigin = translationFromOrigin;
             BeamRotationFromInwardNormal = beamRotationFromInwardNormal;
@@ -48,15 +46,15 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         /// <param name="thetaConvOrDiv">Covergence or Divergance Angle {= 0, for a collimated beam}</param>
         /// <param name="lineLength">The length of the line source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         public DirectionalLineSourceInput(
             double thetaConvOrDiv,
             double lineLength,
-            ISourceProfile sourceProfile)
+            double beamDiameterFWHM)
             : this(
                 thetaConvOrDiv,
                 lineLength,
-                sourceProfile,
+                beamDiameterFWHM,
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
                 SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone(),
@@ -69,7 +67,7 @@ namespace Vts.MonteCarlo.Sources
             : this(
                 0.0,
                 1.0,
-                new FlatSourceProfile(),
+                -1.0, // flat profile
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
                 SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone(),
@@ -88,9 +86,9 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         public double LineLength { get; set; }
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        public ISourceProfile SourceProfile { get; set; }
+        public double BeamDiameterFWHM { get; set; }
         /// <summary>
         /// New source axis direction
         /// </summary>
@@ -120,7 +118,7 @@ namespace Vts.MonteCarlo.Sources
             return new DirectionalLineSource(
                 this.ThetaConvOrDiv,
                 this.LineLength,
-                this.SourceProfile,
+                this.BeamDiameterFWHM,
                 this.NewDirectionOfPrincipalSourceAxis,
                 this.TranslationFromOrigin,
                 this.BeamRotationFromInwardNormal,
@@ -136,13 +134,13 @@ namespace Vts.MonteCarlo.Sources
     public class DirectionalLineSource : LineSourceBase
     {
         private double _thetaConvOrDiv;   //convergence:positive, divergence:negative  collimated:zero
-               
+
         /// <summary>
         /// Initializes a new instance of the DirectionalLineSource class
         /// </summary>
         /// <param name="thetaConvOrDiv">Covergence or Divergance Angle {= 0, for a collimated beam}</param>
         /// <param name="lineLength">The length of the line source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="beamRotationFromInwardNormal">Ray rotation from inward normal</param>
@@ -150,14 +148,14 @@ namespace Vts.MonteCarlo.Sources
         public DirectionalLineSource(
             double thetaConvOrDiv,
             double lineLength,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis = null,
             Position translationFromOrigin = null,
             PolarAzimuthalAngles beamRotationFromInwardNormal = null,
             int initialTissueRegionIndex = 0)
                 : base(
                     lineLength,
-                    sourceProfile,
+                    beamDiameterFWHM,
                     newDirectionOfPrincipalSourceAxis,
                     translationFromOrigin,
                     beamRotationFromInwardNormal,
@@ -174,19 +172,19 @@ namespace Vts.MonteCarlo.Sources
         protected override Direction GetFinalDirection(Position position)
         {
             if (_lineLength == 0.0)
-                return (SourceToolbox.GetDirectionForGivenPolarAzimuthalAngleRangeRandom(
+            {
+                return SourceToolbox.GetDirectionForGivenPolarAzimuthalAngleRangeRandom(
                             new DoubleRange(0.0, Math.Abs(_thetaConvOrDiv)),
                             SourceDefaults.DefaultAzimuthalAngleRange.Clone(),
-                            Rng));
-            else
-            {   
-                // sign is negative for diverging and positive positive for converging 
-                var polarAngle = SourceToolbox.UpdatePolarAngleForDirectionalSources(
-                    0.5 * _lineLength,
-                    position.X,
-                    _thetaConvOrDiv);           
-                return (SourceToolbox.GetDirectionForGiven2DPositionAndGivenPolarAngle(polarAngle, position));
+                            Rng);
             }
+
+            // sign is negative for diverging and positive positive for converging 
+            var polarAngle = SourceToolbox.UpdatePolarAngleForDirectionalSources(
+                0.5 * _lineLength,
+                position.X,
+                _thetaConvOrDiv);           
+            return SourceToolbox.GetDirectionForGiven2DPositionAndGivenPolarAngle(polarAngle, position);
         }
 
 

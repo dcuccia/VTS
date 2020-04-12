@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -12,9 +10,9 @@ namespace Vts.MonteCarlo.Sources
     public abstract class SurfaceEmittingCuboidalSourceBase : ISource
     {
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM
         /// </summary>
-        protected ISourceProfile _sourceProfile;
+        protected double _beamDiameterFWHM;
         /// <summary>
         /// Polar angle emission range
         /// </summary>
@@ -54,7 +52,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="cubeLengthX">The length of the cube (along x axis)</param>
         /// <param name="cubeWidthY">The width of the cube (along y axis)</param>
         /// <param name="cubeHeightZ">The height of the cube (along z axis)</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="polarAngleEmissionRange">Polar angle emission range {0 - 90degrees}</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>  
@@ -63,9 +61,9 @@ namespace Vts.MonteCarlo.Sources
             double cubeLengthX,
             double cubeWidthY,
             double cubeHeightZ,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             DoubleRange polarAngleEmissionRange,
-            Direction newDirectionOfPrincipalSourceAxis,                     
+            Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             int initialTissueRegionIndex)
         {
@@ -73,13 +71,13 @@ namespace Vts.MonteCarlo.Sources
                  newDirectionOfPrincipalSourceAxis != SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                  translationFromOrigin != SourceDefaults.DefaultPosition.Clone(),
                  false);
-            
+
             _cubeLengthX = cubeLengthX;
             _cubeWidthY = cubeWidthY;
             _cubeHeightZ = cubeHeightZ;
-            _sourceProfile = sourceProfile;
+            _beamDiameterFWHM = beamDiameterFWHM;
             _newDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis.Clone();
-            _polarAngleEmissionRange = polarAngleEmissionRange.Clone();  
+            _polarAngleEmissionRange = polarAngleEmissionRange.Clone();
             _translationFromOrigin = translationFromOrigin.Clone();
             _initialTissueRegionIndex = initialTissueRegionIndex;
         }
@@ -93,58 +91,58 @@ namespace Vts.MonteCarlo.Sources
         {
             //Sample emitting side
             String cSide = SelectEmittingSurface(
-                _cubeLengthX, 
-                _cubeWidthY, 
-                _cubeHeightZ, 
+                _cubeLengthX,
+                _cubeWidthY,
+                _cubeHeightZ,
                 Rng);
 
             //sample angular distribution
             Direction finalDirection = SourceToolbox.GetDirectionForGivenPolarAzimuthalAngleRangeRandom(
-                _polarAngleEmissionRange, 
+                _polarAngleEmissionRange,
                 SourceDefaults.DefaultAzimuthalAngleRange.Clone(),
                 Rng);
 
-            Position tempPosition = null;               
-            Position finalPosition = null;               
-             
+            Position tempPosition = null;
+            Position finalPosition = null;
+
             switch (cSide)
             {
                 case "xpos":
-                    tempPosition = GetFinalPositionFromProfileType(_sourceProfile, _cubeHeightZ, _cubeWidthY, Rng);
+                    tempPosition = GetFinalPosition(_beamDiameterFWHM, _cubeHeightZ, _cubeWidthY, Rng);
                     finalPosition.X = 0.5 * _cubeLengthX;
                     finalPosition.Y = tempPosition.Y;
                     finalPosition.Z = tempPosition.X;
                     finalDirection = SourceToolbox.UpdateDirectionAfterRotatingAroundXAxis(0.5 * Math.PI, finalDirection);
                     break;
                 case "xneg":
-                    tempPosition = GetFinalPositionFromProfileType(_sourceProfile, _cubeHeightZ, _cubeWidthY, Rng);
+                    tempPosition = GetFinalPosition(_beamDiameterFWHM, _cubeHeightZ, _cubeWidthY, Rng);
                     finalPosition.X = -0.5 * _cubeLengthX;
                     finalPosition.Y = tempPosition.Y;
                     finalPosition.Z = tempPosition.X;
                     finalDirection = SourceToolbox.UpdateDirectionAfterRotatingAroundXAxis(-0.5 * Math.PI, finalDirection);
                     break;
                 case "ypos":
-                    tempPosition = GetFinalPositionFromProfileType(_sourceProfile, _cubeLengthX, _cubeHeightZ, Rng);
+                    tempPosition = GetFinalPosition(_beamDiameterFWHM, _cubeLengthX, _cubeHeightZ, Rng);
                     finalPosition.X = tempPosition.X;
                     finalPosition.Y = 0.5 * _cubeWidthY;
                     finalPosition.Z = tempPosition.Y;
                     finalDirection = SourceToolbox.UpdateDirectionAfterRotatingAroundYAxis(0.5 * Math.PI, finalDirection);
                     break;
                 case "yneg":
-                    tempPosition = GetFinalPositionFromProfileType(_sourceProfile, _cubeLengthX, _cubeHeightZ, Rng);
+                    tempPosition = GetFinalPosition(_beamDiameterFWHM, _cubeLengthX, _cubeHeightZ, Rng);
                     finalPosition.X = tempPosition.X;
                     finalPosition.Y = -0.5 * _cubeWidthY;
                     finalPosition.Z = tempPosition.Y;
                     finalDirection = SourceToolbox.UpdateDirectionAfterRotatingAroundYAxis(-0.5 * Math.PI, finalDirection);
                     break;
                 case "zpos":
-                    tempPosition = GetFinalPositionFromProfileType(_sourceProfile, _cubeLengthX, _cubeWidthY, Rng);
+                    tempPosition = GetFinalPosition(_beamDiameterFWHM, _cubeLengthX, _cubeWidthY, Rng);
                     finalPosition.X = tempPosition.X;
                     finalPosition.Y = tempPosition.Y;
-                    finalPosition.Z = 0.5 * _cubeHeightZ;                    
+                    finalPosition.Z = 0.5 * _cubeHeightZ;
                     break;
                 case "zneg":
-                    tempPosition = GetFinalPositionFromProfileType(_sourceProfile, _cubeLengthX, _cubeWidthY, Rng);
+                    tempPosition = GetFinalPosition(_beamDiameterFWHM, _cubeLengthX, _cubeWidthY, Rng);
                     finalPosition.X = tempPosition.X;
                     finalPosition.Y = tempPosition.Y;
                     finalPosition.Z = -0.5 * _cubeHeightZ;
@@ -155,7 +153,7 @@ namespace Vts.MonteCarlo.Sources
 
             //Find the relevent polar and azimuthal pair for the direction
             PolarAzimuthalAngles _rotationalAnglesOfPrincipalSourceAxis = SourceToolbox.GetPolarAzimuthalPairFromDirection(_newDirectionOfPrincipalSourceAxis);
-            
+
             //Translation and source rotation
             SourceToolbox.UpdateDirectionPositionAfterGivenFlags(
                 ref finalPosition,
@@ -170,34 +168,23 @@ namespace Vts.MonteCarlo.Sources
         }
 
 
-        private static Position GetFinalPositionFromProfileType(ISourceProfile sourceProfile, double rectLengthX, double rectWidthY, Random rng)
+        private static Position GetFinalPosition(double beamDiameterFWHM, double rectLengthX, double rectWidthY, Random rng)
         {
             Position finalPosition = null;
-            switch (sourceProfile.SourceProfileType)
-            {
-                case SourceProfileType.Flat:
-                    // var flatProfile = sourceProfile as FlatSourceProfile;
-                    SourceToolbox.GetPositionInARectangleRandomFlat(
+            return beamDiameterFWHM < 0.0
+                ? SourceToolbox.GetPositionInARectangleRandomFlat(
                         SourceDefaults.DefaultPosition.Clone(),
                         rectLengthX,
                         rectWidthY,
-                        rng);
-                    break;
-                case SourceProfileType.Gaussian:
-                    var gaussianProfile = sourceProfile as GaussianSourceProfile;
-                    finalPosition = SourceToolbox.GetPositionInARectangleRandomGaussian(
+                        rng)
+                : SourceToolbox.GetPositionInARectangleRandomGaussian(
                         SourceDefaults.DefaultPosition.Clone(),
-                        0.5*rectLengthX,
-                        0.5*rectWidthY,
-                        gaussianProfile.BeamDiaFWHM,
+                        0.5 * rectLengthX,
+                        0.5 * rectWidthY,
+                        beamDiameterFWHM,
                         rng);
-                    break;
-            }
-
-
-            return finalPosition;
         }
-        
+
         /// <summary>
         /// Select the cuboid surface after sampling
         /// </summary>
@@ -205,7 +192,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="widthY">The width of the cube (along y axis)</param>
         /// <param name="heightZ">The height of the cube (along z axis)</param>
         /// <param name="rng"></param>
-        public static String SelectEmittingSurface(            
+        public static String SelectEmittingSurface(
             double lengthX,
             double widthY,
             double heightZ,
@@ -216,7 +203,7 @@ namespace Vts.MonteCarlo.Sources
             double lw = lengthX * widthY;
             double temp1 = 2 * (hw + lh + lw) * rng.NextDouble();
 
-            if (temp1 < hw) {return "xpos"; }
+            if (temp1 < hw) { return "xpos"; }
             else if (temp1 < (2 * hw)) { return "xneg"; }
             else if (temp1 < (2 * hw + lh)) { return "ypos"; }
             else if (temp1 < (2 * (hw + lh))) { return "yneg"; }

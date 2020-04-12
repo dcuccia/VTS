@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -12,9 +10,9 @@ namespace Vts.MonteCarlo.Sources
     public abstract class LineSourceBase : ISource
     {
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        protected ISourceProfile _sourceProfile;
+        protected double _beamDiameterFWHM;
         /// <summary>
         /// New source axis direction
         /// </summary>
@@ -44,14 +42,14 @@ namespace Vts.MonteCarlo.Sources
         /// Defines LineSourceBase class
         /// </summary>
         /// <param name="lineLength">The length of the line source</param>
-        /// <param name="sourceProfile">Source profile type</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="beamRotationFromInwardNormal">Beam rotation from inward normal</param>
         /// <param name="initialTissueRegionIndex">Initial tissue region index</param>
         protected LineSourceBase(
             double lineLength,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             PolarAzimuthalAngles beamRotationFromInwardNormal,
@@ -70,7 +68,7 @@ namespace Vts.MonteCarlo.Sources
                 beamRotationFromInwardNormal != SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone());
 
             _lineLength = lineLength;
-            _sourceProfile = sourceProfile;
+            _beamDiameterFWHM = beamDiameterFWHM;
             _newDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis.Clone();
             _translationFromOrigin = translationFromOrigin.Clone();
             _beamRotationFromInwardNormal = beamRotationFromInwardNormal.Clone();
@@ -85,7 +83,7 @@ namespace Vts.MonteCarlo.Sources
         public Photon GetNextPhoton(ITissue tissue)
         {
             //Source starts from anywhere in the line
-            Position finalPosition = GetFinalPositionFromProfileType(_sourceProfile, _lineLength, Rng);
+            Position finalPosition = GetFinalPosition(_beamDiameterFWHM, _lineLength, Rng);
 
             // sample angular distribution
             Direction finalDirection = GetFinalDirection(finalPosition);
@@ -114,28 +112,19 @@ namespace Vts.MonteCarlo.Sources
         /// <returns>new direction</returns>
         protected abstract Direction GetFinalDirection(Position position); // position may or may not be needed
 
-        private static Position GetFinalPositionFromProfileType(ISourceProfile sourceProfile, double lineLength, Random rng)
+        private static Position GetFinalPosition(double beamDiameterFWHM, double lineLength, Random rng)
         {
             Position finalPosition = SourceDefaults.DefaultPosition.Clone();
-            switch (sourceProfile.SourceProfileType)
-            {
-                case SourceProfileType.Flat:
-                    // var flatProfile = sourceProfile as FlatSourceProfile;
-                    finalPosition = SourceToolbox.GetPositionInALineRandomFlat(
+            return beamDiameterFWHM < 0.0
+                ? SourceToolbox.GetPositionInALineRandomFlat(
                         finalPosition,
                         lineLength,
-                        rng);
-                    break;
-                case SourceProfileType.Gaussian:
-                    var gaussianProfile = sourceProfile as GaussianSourceProfile;
-                    finalPosition = SourceToolbox.GetPositionInALineRandomGaussian(
+                        rng)
+                : SourceToolbox.GetPositionInALineRandomGaussian(
                         finalPosition,
                         0.5*lineLength,
-                        gaussianProfile.BeamDiaFWHM,
+                        beamDiameterFWHM,
                         rng);
-                    break;                
-            }
-            return finalPosition;
         }
 
         #region Random number generator code (copy-paste into all sources)

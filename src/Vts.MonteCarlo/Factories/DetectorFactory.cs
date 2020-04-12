@@ -76,15 +76,6 @@ namespace Vts.MonteCarlo.Factories
                 throw new ArgumentException("Cannot register detector input " + detectorInputType.AssemblyQualifiedName +
                     " because it does not have a parameterless (default) constructor.");
             }
-
-            var detectorInput = (IDetectorInput) Activator.CreateInstance(detectorInputType);
-
-            // todo: is this needed any more, now that we're using Scrutor?
-            VtsJsonSerializer.KnownConverters.AddRange(new JsonConverter[]
-                {
-                    new ConventionBasedConverter<IDetectorInput>(detectorInputType.Namespace, detectorInputType.Assembly.FullName, "TallyType", new[] { detectorInput.TallyType }),
-                    new ConventionBasedConverter<IDetector>( detectorType.Namespace, detectorType.Assembly.FullName, "TallyType", new[] { detectorInput.TallyType })
-                });
         }
     }
 }

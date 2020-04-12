@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -19,7 +17,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="aParameter">"a" parameter of the ellipsoid source</param>
         /// <param name="bParameter">"b" parameter of the ellipsoid source</param>
         /// <param name="cParameter">"c" parameter of the ellipsoid source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="initialTissueRegionIndex">Initial tissue region index</param>
@@ -27,7 +25,7 @@ namespace Vts.MonteCarlo.Sources
             double aParameter,
             double bParameter,
             double cParameter,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             int initialTissueRegionIndex)
@@ -36,7 +34,7 @@ namespace Vts.MonteCarlo.Sources
             AParameter = aParameter;
             BParameter = bParameter;
             CParameter = cParameter;
-            SourceProfile = sourceProfile;
+            BeamDiameterFWHM = beamDiameterFWHM;
             NewDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis;
             TranslationFromOrigin = translationFromOrigin;
             InitialTissueRegionIndex = initialTissueRegionIndex;
@@ -48,17 +46,17 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="aParameter">"a" parameter of the ellipsoid source</param>
         /// <param name="bParameter">"b" parameter of the ellipsoid source</param>
         /// <param name="cParameter">"c" parameter of the ellipsoid source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         public IsotropicVolumetricEllipsoidalSourceInput(
             double aParameter,
             double bParameter,
             double cParameter,
-            ISourceProfile sourceProfile)
+            double beamDiameterFWHM)
             : this(
                 aParameter,
                 bParameter,
                 cParameter,
-                sourceProfile,
+                beamDiameterFWHM,
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
                 0) { }
@@ -71,7 +69,7 @@ namespace Vts.MonteCarlo.Sources
                 1.0,
                 1.0,
                 2.0,
-                new FlatSourceProfile(),
+                -1.0, // flat profile
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
                 0) { }
@@ -93,9 +91,9 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         public double CParameter { get; set; }
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        public ISourceProfile SourceProfile { get; set; }
+        public double BeamDiameterFWHM { get; set; }
         /// <summary>
         /// New source axis direction
         /// </summary>
@@ -122,7 +120,7 @@ namespace Vts.MonteCarlo.Sources
                 this.AParameter,
                 this.BParameter,
                 this.CParameter,
-                this.SourceProfile,
+                this.BeamDiameterFWHM,
                 this.NewDirectionOfPrincipalSourceAxis,
                 this.TranslationFromOrigin,
                 this.InitialTissueRegionIndex) { Rng = rng };
@@ -135,7 +133,7 @@ namespace Vts.MonteCarlo.Sources
     /// </summary>
     public class IsotropicVolumetricEllipsoidalSource : VolumetricEllipsoidalSourceBase
     {
-       
+
         /// <summary>
         /// Returns an instance of  Isotropic Ellipsoidal Source with a given source profile (Flat/Gaussian), 
         ///  new source axis direction, and translation.
@@ -143,7 +141,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="aParameter">"a" parameter of the ellipsoid source</param>
         /// <param name="bParameter">"b" parameter of the ellipsoid source</param>
         /// <param name="cParameter">"c" parameter of the ellipsoid source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="initialTissueRegionIndex">Initial tissue region index</param>
@@ -151,7 +149,7 @@ namespace Vts.MonteCarlo.Sources
             double aParameter,
             double bParameter,
             double cParameter,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis = null,
             Position translationFromOrigin = null,
             int initialTissueRegionIndex = 0)
@@ -159,15 +157,11 @@ namespace Vts.MonteCarlo.Sources
                 aParameter,
                 bParameter,
                 cParameter,
-                sourceProfile,
+                beamDiameterFWHM,
                 newDirectionOfPrincipalSourceAxis,
                 translationFromOrigin,
                 initialTissueRegionIndex)
         {
-            if (newDirectionOfPrincipalSourceAxis == null)
-                newDirectionOfPrincipalSourceAxis = SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone();
-            if (translationFromOrigin == null)
-                translationFromOrigin = SourceDefaults.DefaultPosition.Clone();
         }                
 
        /// <summary>

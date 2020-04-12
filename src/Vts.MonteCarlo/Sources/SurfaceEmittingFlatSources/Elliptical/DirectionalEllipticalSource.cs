@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -19,7 +17,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="thetaConvOrDiv">Covergence or Divergance Angle {= 0, for a collimated beam}</param>
         /// <param name="aParameter">"a" parameter of the ellipse source</param>
         /// <param name="bParameter">"b" parameter of the ellipse source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="beamRotationFromInwardNormal">beam rotation angle</param>
@@ -28,7 +26,7 @@ namespace Vts.MonteCarlo.Sources
             double thetaConvOrDiv,
             double aParameter,
             double bParameter,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             PolarAzimuthalAngles beamRotationFromInwardNormal,
@@ -38,7 +36,7 @@ namespace Vts.MonteCarlo.Sources
             ThetaConvOrDiv = thetaConvOrDiv;
             AParameter = aParameter;
             BParameter = bParameter;
-            SourceProfile = sourceProfile;
+            BeamDiameterFWHM = beamDiameterFWHM;
             NewDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis;
             TranslationFromOrigin = translationFromOrigin;
             BeamRotationFromInwardNormal = beamRotationFromInwardNormal;
@@ -51,17 +49,17 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="thetaConvOrDiv">Covergence or Divergance Angle {= 0, for a collimated beam}</param>
         /// <param name="aParameter">"a" parameter of the ellipse source</param>
         /// <param name="bParameter">"b" parameter of the ellipse source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         public DirectionalEllipticalSourceInput(
             double thetaConvOrDiv,
             double aParameter,
             double bParameter,
-            ISourceProfile sourceProfile)
+            double beamDiameterFWHM)
             : this(
                 thetaConvOrDiv,
                 aParameter,
                 bParameter,
-                sourceProfile,
+                beamDiameterFWHM,
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
                 SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone(),
@@ -75,7 +73,7 @@ namespace Vts.MonteCarlo.Sources
                 0.0,
                 1.0,
                 2.0,
-                new FlatSourceProfile(),
+                -1.0,
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
                 SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone(),
@@ -98,9 +96,9 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         public double BParameter { get; set; }
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        public ISourceProfile SourceProfile { get; set; }
+        public double BeamDiameterFWHM { get; set; }
         /// <summary>
         /// New source axis direction
         /// </summary>
@@ -131,7 +129,7 @@ namespace Vts.MonteCarlo.Sources
                 this.ThetaConvOrDiv,
                 this.AParameter,
                 this.BParameter,
-                this.SourceProfile,
+                this.BeamDiameterFWHM,
                 this.NewDirectionOfPrincipalSourceAxis,
                 this.TranslationFromOrigin,
                 this.BeamRotationFromInwardNormal,
@@ -155,7 +153,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="thetaConvOrDiv">Covergence or Divergance Angle {= 0, for a collimated beam}</param>
         /// <param name="aParameter">"a" parameter of the ellipse source</param>
         /// <param name="bParameter">"b" parameter of the ellipse source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>    
         /// <param name="beamRotationFromInwardNormal">Polar Azimuthal Rotational Angle of inward Normal</param>
@@ -164,7 +162,7 @@ namespace Vts.MonteCarlo.Sources
             double thetaConvOrDiv,
             double aParameter,
             double bParameter,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis = null,
             Position translationFromOrigin = null,
             PolarAzimuthalAngles beamRotationFromInwardNormal = null,
@@ -172,19 +170,13 @@ namespace Vts.MonteCarlo.Sources
             : base(
                 aParameter,
                 bParameter,
-                sourceProfile,
+                beamDiameterFWHM,
                 newDirectionOfPrincipalSourceAxis,
                 translationFromOrigin,
                 beamRotationFromInwardNormal,
                 initialTissueRegionIndex)
         {
             _thetaConvOrDiv = thetaConvOrDiv;
-            if (newDirectionOfPrincipalSourceAxis == null)
-                newDirectionOfPrincipalSourceAxis = SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone();
-            if (translationFromOrigin == null)
-                translationFromOrigin = SourceDefaults.DefaultPosition.Clone();
-            if (beamRotationFromInwardNormal == null)
-                beamRotationFromInwardNormal = SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone();
         }
 
 
@@ -195,20 +187,20 @@ namespace Vts.MonteCarlo.Sources
         /// <returns>new direction</returns>  
         protected override Direction GetFinalDirection(Position position)
         {
-            if ((_aParameter == 0.0) && (_bParameter == 0.0))
+            if (_aParameter == 0.0 && _bParameter == 0.0)
+            {
                 return (SourceToolbox.GetDirectionForGivenPolarAzimuthalAngleRangeRandom(
                             new DoubleRange(0.0, Math.Abs(_thetaConvOrDiv)),
                             SourceDefaults.DefaultAzimuthalAngleRange.Clone(),
                             Rng));
-            else
-            {
-                // sign is negative for diverging and positive positive for converging 
-                var polarAngle = SourceToolbox.UpdatePolarAngleForDirectionalSources(
-                    _aParameter,
-                    Math.Sqrt(position.X * position.X + position.Y * position.Y),
-                    _thetaConvOrDiv);
-                return (SourceToolbox.GetDirectionForGiven2DPositionAndGivenPolarAngle(polarAngle, position));
             }
+
+            // sign is negative for diverging and positive positive for converging 
+            var polarAngle = SourceToolbox.UpdatePolarAngleForDirectionalSources(
+                _aParameter,
+                Math.Sqrt(position.X * position.X + position.Y * position.Y),
+                _thetaConvOrDiv);
+            return (SourceToolbox.GetDirectionForGiven2DPositionAndGivenPolarAngle(polarAngle, position));
         }
     }
 }

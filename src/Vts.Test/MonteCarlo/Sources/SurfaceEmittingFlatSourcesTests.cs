@@ -5,7 +5,6 @@ using Vts.Common;
 using Vts.MonteCarlo;
 using Vts.MonteCarlo.Helpers;
 using Vts.MonteCarlo.Sources;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 using Vts.MonteCarlo.Tissues;
 
 namespace Vts.Test.MonteCarlo.Sources
@@ -98,10 +97,10 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();             
-            var profile = new FlatSourceProfile();
+            var beamDiameterFWHM = -1.0; // flat beam
 
 
-            var ps = new CustomCircularSource(_outRad, _inRad, profile, _polRange, _aziRange, _direction, _translation, _angPair)
+            var ps = new CustomCircularSource(_outRad, _inRad, beamDiameterFWHM, _polRange, _aziRange, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -127,10 +126,8 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new GaussianSourceProfile(_bdFWHM);
-
-
-            var ps = new CustomCircularSource(_outRad, _inRad, profile, _polRange, _aziRange, _direction, _translation, _angPair)
+            
+            var ps = new CustomCircularSource(_outRad, _inRad, _bdFWHM, _polRange, _aziRange, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -157,10 +154,10 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new FlatSourceProfile();
 
+            var beamDiameterFWHM = -1.0; // flat beam
 
-            var ps = new DirectionalCircularSource(_polarAngle, _outRad, _inRad, profile, _direction, _translation, _angPair)
+            var ps = new DirectionalCircularSource(_polarAngle, _outRad, _inRad, beamDiameterFWHM, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -186,10 +183,8 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new GaussianSourceProfile(_bdFWHM);
 
-
-            var ps = new DirectionalCircularSource(_polarAngle, _outRad, _inRad, profile, _direction, _translation, _angPair)
+            var ps = new DirectionalCircularSource(_polarAngle, _outRad, _inRad, _bdFWHM, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -216,10 +211,10 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new FlatSourceProfile();
 
+            var beamDiameterFWHM = -1.0; // flat beam
 
-            var ps = new CustomEllipticalSource(_aParameter, _bParameter, profile, _polRange, _aziRange, _direction, _translation, _angPair)
+            var ps = new CustomEllipticalSource(_aParameter, _bParameter, beamDiameterFWHM, _polRange, _aziRange, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -244,10 +239,8 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new GaussianSourceProfile(_bdFWHM);
 
-
-            var ps = new CustomEllipticalSource(_aParameter, _bParameter, profile, _polRange, _aziRange, _direction, _translation, _angPair)
+            var ps = new CustomEllipticalSource(_aParameter, _bParameter, _bdFWHM, _polRange, _aziRange, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -274,10 +267,10 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new FlatSourceProfile();
 
+            var beamDiameterFWHM = -1.0; // flat beam
 
-            var ps = new DirectionalEllipticalSource(_polarAngle, _aParameter, _bParameter, profile, _direction, _translation, _angPair)
+            var ps = new DirectionalEllipticalSource(_polarAngle, _aParameter, _bParameter, beamDiameterFWHM, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -303,10 +296,8 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new GaussianSourceProfile(_bdFWHM);
 
-
-            var ps = new DirectionalEllipticalSource(_polarAngle, _aParameter, _bParameter, profile, _direction, _translation, _angPair)
+            var ps = new DirectionalEllipticalSource(_polarAngle, _aParameter, _bParameter, _bdFWHM, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -333,10 +324,9 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new FlatSourceProfile();
+            var beamDiameterFWHM = -1.0; // flat beam
 
-
-            var ps = new CustomRectangularSource(_lengthX, _widthY, profile, _polRange, _aziRange, _direction, _translation, _angPair)
+            var ps = new CustomRectangularSource(_lengthX, _widthY, beamDiameterFWHM, _polRange, _aziRange, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -361,10 +351,8 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new GaussianSourceProfile(_bdFWHM);
 
-
-            var ps = new CustomRectangularSource(_lengthX, _widthY, profile, _polRange, _aziRange, _direction, _translation, _angPair)
+            var ps = new CustomRectangularSource(_lengthX, _widthY, _bdFWHM, _polRange, _aziRange, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -391,10 +379,9 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new FlatSourceProfile();
+            var beamDiameterFWHM = -1.0; // flat beam
 
-
-            var ps = new DirectionalRectangularSource(_polarAngle, _lengthX, _widthY, profile, _direction, _translation, _angPair)
+            var ps = new DirectionalRectangularSource(_polarAngle, _lengthX, _widthY, beamDiameterFWHM, _direction, _translation, _angPair)
             {
                 Rng = rng
             };
@@ -420,10 +407,8 @@ namespace Vts.Test.MonteCarlo.Sources
 
             Random rng = new MathNet.Numerics.Random.MersenneTwister(0); // not really necessary here, as this is now the default
             ITissue tissue = new MultiLayerTissue();
-            var profile = new GaussianSourceProfile(_bdFWHM);
 
-
-            var ps = new DirectionalRectangularSource(_polarAngle, _lengthX, _widthY, profile, _direction, _translation, _angPair)
+            var ps = new DirectionalRectangularSource(_polarAngle, _lengthX, _widthY, _bdFWHM, _direction, _translation, _angPair)
             {
                 Rng = rng
             };

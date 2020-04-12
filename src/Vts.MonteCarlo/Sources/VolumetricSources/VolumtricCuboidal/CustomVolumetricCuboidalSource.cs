@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -19,7 +17,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="cubeLengthX">Length of the cuboid</param>
         /// <param name="cubeWidthY">Width of the cuboid</param>
         /// <param name="cubeHeightZ">Height of the cuboid</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="polarAngleEmissionRange">Polar angle range</param>
         /// <param name="azimuthalAngleEmissionRange">Azimuthal angle range</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
@@ -29,7 +27,7 @@ namespace Vts.MonteCarlo.Sources
             double cubeLengthX,
             double cubeWidthY,
             double cubeHeightZ,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             DoubleRange polarAngleEmissionRange,
             DoubleRange azimuthalAngleEmissionRange,
             Direction newDirectionOfPrincipalSourceAxis,
@@ -40,7 +38,7 @@ namespace Vts.MonteCarlo.Sources
             CubeLengthX = cubeLengthX;
             CubeWidthY = cubeWidthY;
             CubeHeightZ = cubeHeightZ;
-            SourceProfile = sourceProfile;
+            BeamDiameterFWHM = beamDiameterFWHM;
             PolarAngleEmissionRange = polarAngleEmissionRange;
             AzimuthalAngleEmissionRange = azimuthalAngleEmissionRange;
             NewDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis;
@@ -54,21 +52,21 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="cubeLengthX">Length of the cuboid</param>
         /// <param name="cubeWidthY">Width of the cuboid</param>
         /// <param name="cubeHeightZ">Height of the cuboid</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="polarAngleEmissionRange">Polar angle range</param>
         /// <param name="azimuthalAngleEmissionRange">Azimuthal angle range</param>
         public CustomVolumetricCuboidalSourceInput(
             double cubeLengthX,
             double cubeWidthY,
             double cubeHeightZ,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             DoubleRange polarAngleEmissionRange,
             DoubleRange azimuthalAngleEmissionRange)
             : this(
                 cubeLengthX,
                 cubeWidthY,
                 cubeHeightZ,
-                sourceProfile,
+                beamDiameterFWHM,
                 polarAngleEmissionRange,
                 azimuthalAngleEmissionRange,
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
@@ -83,7 +81,7 @@ namespace Vts.MonteCarlo.Sources
                 1.0,
                 1.0,
                 1.0,
-                new FlatSourceProfile(),
+                -1.0, // flat profile
                 SourceDefaults.DefaultFullPolarAngleRange.Clone(),
                 SourceDefaults.DefaultAzimuthalAngleRange.Clone(),
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
@@ -107,9 +105,9 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         public double CubeHeightZ { get; set; }
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        public ISourceProfile SourceProfile { get; set; }
+        public double BeamDiameterFWHM { get; set; }
         /// <summary>
         /// Polar angle range
         /// </summary>
@@ -144,7 +142,7 @@ namespace Vts.MonteCarlo.Sources
                 this.CubeLengthX,
                 this.CubeWidthY,
                 this.CubeHeightZ,
-                this.SourceProfile,
+                this.BeamDiameterFWHM,
                 this.PolarAngleEmissionRange,
                 this.AzimuthalAngleEmissionRange,
                 this.NewDirectionOfPrincipalSourceAxis,
@@ -161,7 +159,7 @@ namespace Vts.MonteCarlo.Sources
     public class CustomVolumetricCuboidalSource : VolumetricCuboidalSourceBase
     {
         private DoubleRange _polarAngleEmissionRange;
-        private DoubleRange _azimuthalAngleEmissionRange;       
+        private DoubleRange _azimuthalAngleEmissionRange;
 
         /// <summary>
         /// Returns an instance of  Custom Cuboidal Source with a given source profile (Flat/Gaussian), 
@@ -170,7 +168,7 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="cubeLengthX">The length of the cuboid</param>
         /// <param name="cubeWidthY">The width of the cuboid</param>
         /// <param name="cubeHeightZ">The height of the cuboid</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="polarAngleEmissionRange">Polar angle emission range</param>
         /// <param name="azimuthalAngleEmissionRange">Azimuthal angle emission range</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
@@ -180,7 +178,7 @@ namespace Vts.MonteCarlo.Sources
             double cubeLengthX,
             double cubeWidthY,
             double cubeHeightZ,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             DoubleRange polarAngleEmissionRange,
             DoubleRange azimuthalAngleEmissionRange,
             Direction newDirectionOfPrincipalSourceAxis = null,
@@ -190,18 +188,13 @@ namespace Vts.MonteCarlo.Sources
                 cubeLengthX,
                 cubeWidthY,
                 cubeHeightZ,
-                sourceProfile,
+                beamDiameterFWHM,
                 newDirectionOfPrincipalSourceAxis,
                 translationFromOrigin,
                 initialTissueRegionIndex)
         {
             _polarAngleEmissionRange = polarAngleEmissionRange.Clone();
             _azimuthalAngleEmissionRange = azimuthalAngleEmissionRange.Clone();
-
-            if (newDirectionOfPrincipalSourceAxis == null)
-                newDirectionOfPrincipalSourceAxis = SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone();
-            if (translationFromOrigin == null)
-                translationFromOrigin = SourceDefaults.DefaultPosition.Clone();
         }
 
         /// <summary>

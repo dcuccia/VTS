@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -17,14 +15,14 @@ namespace Vts.MonteCarlo.Sources
         /// Initializes a new instance of IsotropicLineSourceInput class
         /// </summary>
         /// <param name="lineLength">The length of the line source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="beamRotationFromInwardNormal">beam rotation angle</param>
         /// <param name="initialTissueRegionIndex">Initial tissue region index</param>
         public IsotropicLineSourceInput(
             double lineLength,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             PolarAzimuthalAngles beamRotationFromInwardNormal,
@@ -32,7 +30,7 @@ namespace Vts.MonteCarlo.Sources
         {
             SourceType = "IsotropicLine";
             LineLength = lineLength;
-            SourceProfile = sourceProfile;
+            BeamDiameterFWHM = beamDiameterFWHM;
             NewDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis;
             TranslationFromOrigin = translationFromOrigin;
             BeamRotationFromInwardNormal = beamRotationFromInwardNormal;
@@ -43,13 +41,13 @@ namespace Vts.MonteCarlo.Sources
         /// Initializes a new instance of IsotropicLineSourceInput class
         /// </summary>
         /// <param name="lineLength">The length of the line source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         public IsotropicLineSourceInput(
             double lineLength,
-            ISourceProfile sourceProfile)
+            double beamDiameterFWHM)
             : this(
                 lineLength,
-                sourceProfile,
+                beamDiameterFWHM,
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
                 SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone(),
@@ -61,7 +59,7 @@ namespace Vts.MonteCarlo.Sources
         public IsotropicLineSourceInput()
             : this(
                 1.0,
-                new FlatSourceProfile(),
+                -1.0, // flat profile
                 SourceDefaults.DefaultDirectionOfPrincipalSourceAxis.Clone(),
                 SourceDefaults.DefaultPosition.Clone(),
                 SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone(),
@@ -76,9 +74,9 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         public double LineLength { get; set; }
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        public ISourceProfile SourceProfile { get; set; }
+        public double BeamDiameterFWHM { get; set; }
         /// <summary>
         /// New source axis direction
         /// </summary>
@@ -107,7 +105,7 @@ namespace Vts.MonteCarlo.Sources
 
             return new IsotropicLineSource(
                 this.LineLength,
-                this.SourceProfile,
+                this.BeamDiameterFWHM,
                 this.NewDirectionOfPrincipalSourceAxis,
                 this.TranslationFromOrigin,
                 this.BeamRotationFromInwardNormal) { Rng = rng };
@@ -119,27 +117,27 @@ namespace Vts.MonteCarlo.Sources
     /// inward normal beam rotation and initial tissue region index.
     /// </summary>
     public class IsotropicLineSource : LineSourceBase
-    {     
+    {
         /// <summary>
         /// Returns an instance of isotropicLineSource with line length, source profile, direction, position, 
         /// inward normal beam rotation and initial tissue region index.
         /// </summary>
         /// <param name="lineLength">The length of the line source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="beamRotationFromInwardNormal">Ray rotation from inward normal</param>
         /// <param name="initialTissueRegionIndex">Initial tissue region index</param>
         public IsotropicLineSource(
             double lineLength,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis = null,
             Position translationFromOrigin = null,
             PolarAzimuthalAngles beamRotationFromInwardNormal = null,
             int initialTissueRegionIndex = 0)
             : base(
                 lineLength,
-                sourceProfile,
+                beamDiameterFWHM,
                 newDirectionOfPrincipalSourceAxis,
                 translationFromOrigin,
                 beamRotationFromInwardNormal,

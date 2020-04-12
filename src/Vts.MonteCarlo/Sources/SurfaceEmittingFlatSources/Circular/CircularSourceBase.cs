@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -12,9 +10,9 @@ namespace Vts.MonteCarlo.Sources
     public abstract class CircularSourceBase : ISource
     {
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        protected ISourceProfile _sourceProfile;
+        protected double _beamDiameterFWHM;
         /// <summary>
         /// New source axis direction 
         /// </summary>
@@ -49,7 +47,7 @@ namespace Vts.MonteCarlo.Sources
         /// </summary>
         /// <param name="innerRadius">The inner radius of the circular source</param>
         /// <param name="outerRadius">The outer radius of the circular source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param> 
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="beamRotationFromInwardNormal">Polar Azimuthal Rotational Angle of inward Normal</param>
@@ -57,7 +55,7 @@ namespace Vts.MonteCarlo.Sources
         protected CircularSourceBase(            
             double outerRadius,
             double innerRadius,
-            ISourceProfile sourceProfile,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             PolarAzimuthalAngles beamRotationFromInwardNormal,
@@ -69,8 +67,8 @@ namespace Vts.MonteCarlo.Sources
                 beamRotationFromInwardNormal != SourceDefaults.DefaultBeamRoationFromInwardNormal.Clone());
 
             _outerRadius = outerRadius;
-            _innerRadius = innerRadius;            
-            _sourceProfile = sourceProfile;
+            _innerRadius = innerRadius;
+            _beamDiameterFWHM = beamDiameterFWHM;
             _newDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis.Clone();
             _translationFromOrigin = translationFromOrigin.Clone();
             _beamRotationFromInwardNormal = beamRotationFromInwardNormal.Clone();
@@ -85,7 +83,7 @@ namespace Vts.MonteCarlo.Sources
         public Photon GetNextPhoton(ITissue tissue)
         {
             //Source starts from anywhere in the circle
-            Position finalPosition = GetFinalPositionFromProfileType(_sourceProfile, _innerRadius, _outerRadius, Rng);
+            Position finalPosition = GetFinalPosition(_beamDiameterFWHM, _innerRadius, _outerRadius, Rng);
 
             // sample angular distribution
             Direction finalDirection = GetFinalDirection(finalPosition);
@@ -114,30 +112,20 @@ namespace Vts.MonteCarlo.Sources
         /// <returns>new direction</returns>
         protected abstract Direction GetFinalDirection(Position position); // position may or may not be needed
 
-        private static Position GetFinalPositionFromProfileType(ISourceProfile sourceProfile, double innerRadius, double outerRadius, Random rng)
+        private static Position GetFinalPosition(double beamDiameterFWHM, double innerRadius, double outerRadius, Random rng)
         {
-            Position finalPosition = SourceDefaults.DefaultPosition.Clone();
-            switch (sourceProfile.SourceProfileType)
-            {
-                case SourceProfileType.Flat:
-                    // var flatProfile = sourceProfile as FlatSourceProfile;
-                    finalPosition = SourceToolbox.GetPositionInACircleRandomFlat(
+            return beamDiameterFWHM < 0.0
+                ? SourceToolbox.GetPositionInACircleRandomFlat(
                         SourceDefaults.DefaultPosition.Clone(),
                         innerRadius,
                         outerRadius,
-                        rng);
-                    break;
-                 case SourceProfileType.Gaussian:
-                    var gaussianProfile = sourceProfile as GaussianSourceProfile;
-                    finalPosition = SourceToolbox.GetPositionInACircleRandomGaussian(
+                        rng)
+                : SourceToolbox.GetPositionInACircleRandomGaussian(
                         SourceDefaults.DefaultPosition.Clone(),
                         outerRadius,   
                         innerRadius,
-                        gaussianProfile.BeamDiaFWHM,
+                        beamDiameterFWHM,
                         rng);
-                    break;               
-            }
-            return finalPosition;
         }
 
         #region Random number generator code (copy-paste into all sources)

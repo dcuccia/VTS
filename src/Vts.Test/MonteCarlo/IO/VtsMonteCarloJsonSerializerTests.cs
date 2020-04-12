@@ -5,7 +5,6 @@ using Vts.IO;
 using Vts.MonteCarlo;
 using Vts.MonteCarlo.IO;
 using Vts.MonteCarlo.Sources;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 using Vts.MonteCarlo.Tissues;
 
 namespace Vts.Test.IO
@@ -141,14 +140,14 @@ namespace Vts.Test.IO
         {
             var source = new CustomCircularSourceInput
             {
-                SourceProfile = new GaussianSourceProfile(),
+                BeamDiameterFWHM = 1.0,
             };
 
             var sourceSerialized = VtsMonteCarloJsonSerializer.WriteToJson(source);
 
             var sourceDeserialized = VtsMonteCarloJsonSerializer.ReadFromJson<CustomCircularSourceInput>(sourceSerialized);
 
-            Assert.IsTrue(sourceDeserialized.SourceProfile.SourceProfileType == SourceProfileType.Gaussian);
+            Assert.IsTrue(sourceDeserialized.BeamDiameterFWHM == 1.0);
         }
     }
 }

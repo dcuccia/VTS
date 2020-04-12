@@ -15,7 +15,6 @@
     <PackageReference Include="Scrutor" Version="3.2.0" />
     <PackageReference Include="System.Reactive" Version="4.3.2" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
-    <PackageReference Include="Unity" Version="5.11.4" />
   </ItemGroup>
 
   <ItemGroup>

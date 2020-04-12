@@ -1,8 +1,6 @@
 ﻿using System;
 using Vts.Common;
 using Vts.MonteCarlo.Helpers;
-using Vts.MonteCarlo.Interfaces;
-using Vts.MonteCarlo.Sources.SourceProfiles;
 
 namespace Vts.MonteCarlo.Sources
 {
@@ -12,9 +10,9 @@ namespace Vts.MonteCarlo.Sources
     public abstract class VolumetricEllipsoidalSourceBase : ISource
     {
         /// <summary>
-        /// Source profile type
+        /// Source beam diameter FWHM (-1 for flat beam)
         /// </summary>
-        protected ISourceProfile _sourceProfile;
+        protected double _beamDiameterFWHM;
         /// <summary>
         /// New source axis direction
         /// </summary>
@@ -50,15 +48,15 @@ namespace Vts.MonteCarlo.Sources
         /// <param name="aParameter">"a" parameter of the ellipsoid source</param>
         /// <param name="bParameter">"b" parameter of the ellipsoid source</param>
         /// <param name="cParameter">"c" parameter of the ellipsoid source</param>
-        /// <param name="sourceProfile">Source Profile {Flat / Gaussian}</param>
+        /// <param name="beamDiameterFWHM">Beam diameter FWHM (-1 for flat beam)</param>
         /// <param name="newDirectionOfPrincipalSourceAxis">New source axis direction</param>
         /// <param name="translationFromOrigin">New source location</param>
         /// <param name="initialTissueRegionIndex">Initial tissue region index</param>
         protected VolumetricEllipsoidalSourceBase(
             double aParameter,
             double bParameter,
-            double cParameter,            
-            ISourceProfile sourceProfile,
+            double cParameter,
+            double beamDiameterFWHM,
             Direction newDirectionOfPrincipalSourceAxis,
             Position translationFromOrigin,
             int initialTissueRegionIndex)
@@ -71,7 +69,7 @@ namespace Vts.MonteCarlo.Sources
             _aParameter = aParameter;
             _bParameter = bParameter;
             _cParameter = cParameter;
-            _sourceProfile = sourceProfile;
+            _beamDiameterFWHM = beamDiameterFWHM;
             _newDirectionOfPrincipalSourceAxis = newDirectionOfPrincipalSourceAxis.Clone();
             _translationFromOrigin = translationFromOrigin.Clone();
             _initialTissueRegionIndex = initialTissueRegionIndex;
@@ -85,7 +83,7 @@ namespace Vts.MonteCarlo.Sources
         public Photon GetNextPhoton(ITissue tissue)
         {
             //Source starts from anywhere in the ellipsoid
-            Position finalPosition = GetFinalPositionFromProfileType(_sourceProfile, _aParameter, _bParameter, _cParameter, Rng);
+            Position finalPosition = GetFinalPosition(_beamDiameterFWHM, _aParameter, _bParameter, _cParameter, Rng);
 
             // sample angular distribution
             Direction finalDirection = GetFinalDirection();
@@ -112,32 +110,22 @@ namespace Vts.MonteCarlo.Sources
         /// <returns>new direction</returns>
         protected abstract Direction GetFinalDirection(); // position may or may not be needed
 
-        private static Position GetFinalPositionFromProfileType(ISourceProfile sourceProfile, double aParameter, double bParameter, double cParameter, Random rng)
+        private static Position GetFinalPosition(double beamDiameterFWHM, double aParameter, double bParameter, double cParameter, Random rng)
         {
-            Position finalPosition = null;
-            switch (sourceProfile.SourceProfileType)
-            {
-                case SourceProfileType.Flat:
-                    // var flatProfile = sourceProfile as FlatSourceProfile;
-                    SourceToolbox.GetPositionInAnEllipsoidRandomFlat(
-                        SourceDefaults.DefaultPosition.Clone(),
-                        2 * aParameter,
-                        2 * bParameter,
-                        2 * cParameter,
-                        rng);
-                    break;
-                case SourceProfileType.Gaussian:
-                    var gaussianProfile = sourceProfile as GaussianSourceProfile;
-                    finalPosition = SourceToolbox.GetPositionInAnEllipsoidRandomGaussian(
-                        SourceDefaults.DefaultPosition.Clone(),
-                        2 * aParameter,
-                        2 * bParameter,
-                        2 * cParameter,
-                        gaussianProfile.BeamDiaFWHM,
-                        rng);
-                    break;
-            }
-            return finalPosition;
+            return beamDiameterFWHM < 0.0
+                ? SourceToolbox.GetPositionInAnEllipsoidRandomFlat(
+                    SourceDefaults.DefaultPosition.Clone(),
+                    2 * aParameter,
+                    2 * bParameter,
+                    2 * cParameter,
+                    rng)
+                : SourceToolbox.GetPositionInAnEllipsoidRandomGaussian(
+                    SourceDefaults.DefaultPosition.Clone(),
+                    2 * aParameter,
+                    2 * bParameter,
+                    2 * cParameter,
+                    beamDiameterFWHM,
+                    rng);
         }
 
         #region Random number generator code (copy-paste into all sources)
