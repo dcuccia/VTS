@@ -1,38 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' AND ( '$(VisualStudioVersion)'&gt;='16.0' OR '$(VisualStudioVersion)'=='' ) ">
+  <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' AND ( '$(VisualStudioVersion)'&gt;='16.0' OR '$(VisualStudioVersion)'=='' )">
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' AND '$(VisualStudioVersion)'&lt;'16.0'">
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net48</TargetFramework>
-  </PropertyGroup>
-
-  <!-- .NET 4.8 references, compilation flags and build options -->
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Configuration" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Vts\Vts.Modeling.csproj" />
-  </ItemGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48'">
-    <DefineConstants>NET48;NETFULL</DefineConstants>
+    <TargetFrameworks>net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -40,4 +9,10 @@
     <WarningsAsErrors />
     <NoWarn>NU1605</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Vts.Common\Vts.Common.csproj" />
+    <ProjectReference Include="..\Vts.IO\Vts.IO.csproj" />
+    <ProjectReference Include="..\Vts\Vts.Modeling.csproj" />
+  </ItemGroup>
 </Project>

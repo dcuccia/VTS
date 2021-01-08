@@ -1,39 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' AND ( '$(VisualStudioVersion)'&gt;='16.0' OR '$(VisualStudioVersion)'=='' ) ">
+  <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
+    <TargetFrameworks>net5.0</TargetFrameworks>
     <AssemblyName>mc</AssemblyName>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' AND ( '$(VisualStudioVersion)'&gt;='16.0' OR '$(VisualStudioVersion)'=='' )">
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
-    <AssemblyName>mc</AssemblyName>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' AND '$(VisualStudioVersion)'&lt;'16.0'">
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net48</TargetFramework>
-    <AssemblyName>mc</AssemblyName>
-  </PropertyGroup>
-
-  <!-- .NET 4.8 references, compilation flags and build options -->
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Configuration" />
-  </ItemGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48'">
-    <DefineConstants>NET48;NETFULL</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>

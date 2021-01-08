@@ -1,1 +1,0 @@
-dotnet test "src\Vts.sln"
