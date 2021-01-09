@@ -39,6 +39,7 @@
 obj/
 vts_libraries/
 [Pp]ackages/
+.vs/
 
 # MATLAB Specific ignores #
 ###########################
