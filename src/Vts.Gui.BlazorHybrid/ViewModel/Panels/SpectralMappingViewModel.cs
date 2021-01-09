@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using Vts.Common;
 using Vts.Factories;
@@ -288,11 +289,11 @@ namespace Vts.Gui.BlazorHybrid.ViewModel
 
             var tissue = SelectedTissue;
             var wavelengths = WavelengthRangeVM.Values.ToArray();
-            var points = new Point[wavelengths.Length];
+            var points = new DoubleDataPoint[wavelengths.Length];
             for (var wvi = 0; wvi < wavelengths.Length; wvi++)
             {
                 var wavelength = wavelengths[wvi];
-                points[wvi] = new Point(wavelength, tissue.GetMua(wavelength));
+                points[wvi] = new DoubleDataPoint(wavelength, tissue.GetMua(wavelength));
             }
             WindowViewModel.Current.PlotVM.PlotValues.Execute(new[] {new PlotData(points, StringLookup.GetLocalizedString("Label_MuASpectra"))});
 
@@ -320,11 +321,11 @@ namespace Vts.Gui.BlazorHybrid.ViewModel
 
             var tissue = SelectedTissue;
             var wavelengths = WavelengthRangeVM.Values.ToArray();
-            var points = new Point[wavelengths.Length];
+            var points = new DoubleDataPoint[wavelengths.Length];
             for (var wvi = 0; wvi < wavelengths.Length; wvi++)
             {
                 var wavelength = wavelengths[wvi];
-                points[wvi] = new Point(wavelength, tissue.GetMusp(wavelength));
+                points[wvi] = new DoubleDataPoint(wavelength, tissue.GetMusp(wavelength));
             }
 
             WindowViewModel.Current.PlotVM.PlotValues.Execute(new[] {new PlotData(points, StringLookup.GetLocalizedString("Label_MuSPrimeSpectra"))});

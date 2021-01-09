@@ -49,7 +49,7 @@ namespace Vts.Gui.BlazorHybrid.ViewModel
                 if (AxisType == IndependentVariableAxis.Wavelength)
                 {
                     // update the world that this has changed, and react to it if desired (e.g. in Spectral Panel)
-                    Commands.SetWavelength.Execute(AxisValue, null);
+                    Commands.SetWavelength.Execute(AxisValue);
                 }
                 OnPropertyChanged("AxisValue");
             }
