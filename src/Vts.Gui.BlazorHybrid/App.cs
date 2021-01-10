@@ -33,7 +33,7 @@ namespace Vts.Gui.BlazorHybrid
             }
             var host = hostBuilder.Build();
 
-            MainPage = new ContentPage { Title = "My Application" };
+            MainPage = new ContentPage { Title = "Vts Simulator" };
             host.AddComponent<Main>(parent: MainPage);
         }
 

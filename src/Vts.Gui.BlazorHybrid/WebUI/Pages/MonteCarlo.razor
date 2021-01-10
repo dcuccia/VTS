@@ -1,0 +1,29 @@
+@page "/"
+@page "/montecarlo"
+
+@using Vts.MonteCarlo
+@using Vts.MonteCarlo.Detectors
+
+<h1>Counter</h1>
+<p>N:</p><input @bind-value="@_input.N" />
+<button class="btn btn-primary" @onclick="@(async _ => await RunSimulation(_input))">Run simulation!</button>
+@if (_mc?.Results?.Rd != null)
+{
+    <p>Output: @_mc.Results.Rd</p>
+}
+
+@code {
+    SimulationInput _input;
+    MonteCarloSimulation _mc;
+
+    protected override void OnInitialized()
+    {
+        _input = new SimulationInput { DetectorInputs = new[] { new RDiffuseDetectorInput() } };
+    }
+
+    async Task RunSimulation(SimulationInput input)
+    {
+        _mc = new MonteCarloSimulation(input);
+        _mc.Run();
+    }
+}
