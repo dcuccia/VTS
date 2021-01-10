@@ -19,9 +19,9 @@
 }
 
 @code {
-    SimulationInput _input;
-    MonteCarloSimulation _mc;
-    string _progress;
+        SimulationInput _input;
+        MonteCarloSimulation _mc;
+        string _progress;
 
     protected override void OnInitialized()
     {
@@ -30,12 +30,14 @@
 
     async Task RunSimulation(SimulationInput input)
     {
-        var progress = new Progress<(int index, double percentage)>(p => 
+        _mc = new MonteCarloSimulation(input)
         { 
-            _progress = $"{p.index}: {p.percentage} percent done!"; 
-            StateHasChanged();
-        });
-        _mc = new MonteCarloSimulation(input) { ProgressPercentageDone = progress };
+            ProgressPercentageDone = new Progress<(int index, double percentage)>(p =>
+            {
+                _progress = $"{p.index}: {p.percentage} percent done!";
+                StateHasChanged();
+            })
+        };
         await Task.Run(_mc.Run);
     }
 }
