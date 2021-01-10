@@ -5,8 +5,14 @@
 @using Vts.MonteCarlo.Detectors
 
 <h1>Counter</h1>
-<p>N:</p><input @bind-value="@_input.N" />
+<p>N:</p>
+<input @bind-value="@_input.N" />
 <button class="btn btn-primary" @onclick="@(async _ => await RunSimulation(_input))">Run simulation!</button>
+@*<MBLinearProgress></MBLinearProgress>*@
+@if (!string.IsNullOrWhiteSpace(_progress))
+{
+    <p>Progress: @_progress</p>
+}
 @if (_mc?.Results?.Rd != null)
 {
     <p>Output: @_mc.Results.Rd</p>
@@ -15,6 +21,7 @@
 @code {
     SimulationInput _input;
     MonteCarloSimulation _mc;
+    string _progress;
 
     protected override void OnInitialized()
     {
@@ -23,7 +30,12 @@
 
     async Task RunSimulation(SimulationInput input)
     {
-        _mc = new MonteCarloSimulation(input);
-        _mc.Run();
+        var progress = new Progress<(int index, double percentage)>(p => 
+        { 
+            _progress = $"{p.index}: {p.percentage} percent done!"; 
+            StateHasChanged();
+        });
+        _mc = new MonteCarloSimulation(input) { ProgressPercentageDone = progress };
+        await Task.Run(_mc.Run);
     }
 }

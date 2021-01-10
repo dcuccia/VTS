@@ -160,6 +160,8 @@ namespace Vts.MonteCarlo
         /// </summary>
         public SimulationOutput Results { get; private set; }
 
+        public IProgress<(int index, double percentage)>? ProgressPercentageDone { get; set; }
+
         /// <summary>
         /// Method to run parallel MC simulations
         /// </summary>
@@ -472,6 +474,8 @@ namespace Vts.MonteCarlo
             var header = _input.OutputName + " (" + SimulationIndex + "): ";
             /* fraction of photons completed */
             double frac = 100 * n / num_phot;
+
+            ProgressPercentageDone?.Report((index: SimulationIndex, percentage: frac));
 
             logger.Info(() => header + frac + " percent complete\n");
         }
