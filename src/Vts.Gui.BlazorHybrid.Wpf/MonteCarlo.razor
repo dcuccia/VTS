@@ -1,0 +1,51 @@
+﻿@namespace Vts.Gui.BlazorHybrid.Wpf
+@using Microsoft.AspNetCore.Components.Web
+
+@using Vts.MonteCarlo
+@using Vts.MonteCarlo.Detectors
+
+<h1>Counter</h1>
+<p>N:</p>
+<input @bind-value="@_input.N" />
+<button class="btn btn-primary" @onclick="@(async _ => await RunSimulation(_input))">Run simulation!</button>
+@*<MBLinearProgress></MBLinearProgress>*@
+@if (!string.IsNullOrWhiteSpace(_progress))
+{
+    <p>Progress: @_progress</p>
+}
+@if (_mc?.Results?.Rd != null)
+{
+    <p>Output: @_mc.Results.Rd</p>
+}
+
+@code {
+    SimulationInput _input;
+        MonteCarloSimulation _mc;
+        string _progress;
+
+    protected override void OnInitialized()
+    {
+        _input = new SimulationInput { N = 100000, DetectorInputs = new[] { new RDiffuseDetectorInput() } };
+    }
+
+    async Task RunSimulation(SimulationInput input)
+    {
+        var s = new System.Diagnostics.Stopwatch(); s.Start();
+        _mc = new MonteCarloSimulation(input)
+        { 
+            ProgressPercentageDone = new Progress<(int index, double percentage)>(p =>
+            {
+                var secondsSoFar = s.Elapsed.TotalSeconds;
+                var estimatedTimeRemaining = (1 - p.percentage / 100) * secondsSoFar;
+                _progress = $"{p.index}: {p.percentage} percent done! Estimated time remaining: " + estimatedTimeRemaining switch
+                {
+                    >= 3600 => $"{Math.Round(estimatedTimeRemaining/3600)} hours",
+                    >= 60   => $"{Math.Round(estimatedTimeRemaining/60)} minutes",
+                    _       => $"{Math.Round(estimatedTimeRemaining)} seconds",
+                };
+                StateHasChanged();
+            })
+        };
+        await Task.Run(_mc.Run);
+    }
+}
