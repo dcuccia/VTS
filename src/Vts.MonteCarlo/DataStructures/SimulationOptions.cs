@@ -128,6 +128,10 @@ namespace Vts.MonteCarlo
         /// simulation index 
         /// </summary>
         public int SimulationIndex { get; set; }
+        /// <summary>
+        /// Percent increment for logging simulation progress 
+        /// </summary>
+        public double ProgressUpdateIncrementPercentage { get; set; } = 10;
 
 
 

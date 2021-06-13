@@ -21,6 +21,7 @@ namespace Vts.MonteCarlo
         private VirtualBoundaryController _virtualBoundaryController;
         //private IList<IDetectorController> _detectorControllers; // total list indep. of VBs
         private long _numberOfPhotons;
+        private long _progressUpdateIncrementPhotonCount;
         private SimulationStatistics _simulationStatistics;
         private DatabaseWriterController _databaseWriterController = null;
         private pMCDatabaseWriterController _pMCDatabaseWriterController = null;
@@ -55,6 +56,9 @@ namespace Vts.MonteCarlo
             }
 
             _numberOfPhotons = input.N;
+
+            // calculate how often to update progress, in terms of the photon count
+            _progressUpdateIncrementPhotonCount = (long)(input.N * input.Options.ProgressUpdateIncrementPercentage / 100);
 
             AbsorptionWeightingType = input.Options.AbsorptionWeightingType; // CKH add 12/14/09
             TrackStatistics = input.Options.TrackStatistics;
@@ -160,7 +164,7 @@ namespace Vts.MonteCarlo
         /// </summary>
         public SimulationOutput Results { get; private set; }
 
-        public IProgress<(int index, double percentage)>? ProgressPercentageDone { get; set; }
+        public IProgress<(int index, double percentage, double estimatedSecondsRemaining)>? ProgressPercentageDone { get; set; }
 
         /// <summary>
         /// Method to run parallel MC simulations
@@ -260,9 +264,9 @@ namespace Vts.MonteCarlo
                     }
 
                     // todo: bug - num photons is assumed to be over 10 :)
-                    if (n % (_numberOfPhotons / 10) == 0)
+                    if (n % _progressUpdateIncrementPhotonCount == 0)
                     {
-                        DisplayStatus(n, _numberOfPhotons);
+                        DisplayStatus(n, _numberOfPhotons,  (long)stopwatch.Elapsed.TotalSeconds);
                     }
 
                     var photon = _source.GetNextPhoton(_tissue);
@@ -469,15 +473,23 @@ namespace Vts.MonteCarlo
         /// </summary>
         /// <param name="n"></param>
         /// <param name="num_phot"></param>
-        private void DisplayStatus(long n, long num_phot)
+        private void DisplayStatus(long n, long num_phot, long secondsSoFar)
         {
             var header = _input.OutputName + " (" + SimulationIndex + "): ";
-            /* fraction of photons completed */
-            double frac = 100 * n / num_phot;
+            double percentCompleted = 100 * (double) n / num_phot;
+            double estimatedSecondsRemaining = ((double)num_phot / n - 1) * secondsSoFar;
 
-            ProgressPercentageDone?.Report((index: SimulationIndex, percentage: frac));
+            ProgressPercentageDone?.Report((index: SimulationIndex, percentage: percentCompleted, estimatedSecondsRemaining: estimatedSecondsRemaining));
 
-            logger.Info(() => header + frac + " percent complete\n");
+            var timeEstimateString = estimatedSecondsRemaining switch
+            {
+                >= 86400 => $"{Math.Round(estimatedSecondsRemaining / 86400, 1)} days",
+                >= 3600 => $"{Math.Round(estimatedSecondsRemaining / 3600, 1)} hours",
+                >= 60 => $"{Math.Round(estimatedSecondsRemaining / 60, 1)} minutes",
+                _ => $"{Math.Round(estimatedSecondsRemaining)} seconds"
+            };
+
+            logger.Info(() => $"{header}{Math.Round(percentCompleted)} percent complete. Est. remaining: {timeEstimateString} \n");
         }
     }
 }
